@@ -8,3 +8,4 @@
 - weitere Schritte beschreiben lassen
 - (autofill)
 - chatbot für fragen zum dokument
+- vorlesen
