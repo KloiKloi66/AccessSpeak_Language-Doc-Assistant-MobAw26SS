@@ -1,4 +1,4 @@
-# A. Produktbeschreibung
+# A. Projektbeschreibung
 
 Der "AccessSpeak: Language-Doc-Assistant" ist eine App, die Menschen das Aufnehmen von Informationen aus Texten erleichtern soll. Der Hauptfokus liegt dabei auf Texten, die in schwieriger oder sehr technischer Sprache formuliert sind. Diese Erleichterung wird mit KI Agenten umgesetzt, die die jeweiligen Texte oder Dokumente einscannen und übersetzen. Diese Übersetzung kann entweder in eine vereinfachte Sprache geschehen oder in eine Sprache, die Menschen mit anderer Muttersprache besser verstehen können.
 
