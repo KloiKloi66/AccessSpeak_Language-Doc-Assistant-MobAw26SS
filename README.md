@@ -2,12 +2,17 @@
 
 
 ### Agents:
+1. Agent
 - scannen
+2. Agent
 - übersetzen
 - vereinfachen
+3. Agent
 - weitere Schritte beschreiben lassen
 - (autofill)
+4. Agent
 - chatbot für fragen zum dokument
+5. Agent?
 - vorlesen
 
 Figma:
