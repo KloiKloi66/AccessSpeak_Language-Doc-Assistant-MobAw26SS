@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "AccessSpeak_Language-Doc-Assistant-MobAw26SS",
+    "name": "AccessSpeak",
     "slug": "AccessSpeak_Language-Doc-Assistant-MobAw26SS",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/app_logo.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
