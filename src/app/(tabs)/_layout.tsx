@@ -42,5 +42,9 @@ export default function TabsLayout() {
 const styles = StyleSheet.create({
   mainView: {
     flex: 1,
+    paddingTop: 40,
+    paddingBlock: 15,
+    paddingHorizontal: 15,
+    backgroundColor: 'black'
   }
 });
