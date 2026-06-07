@@ -28,5 +28,13 @@ export default function RootLayout() {
         }}
       >
         <Stack.Screen name='(tabs)' />
+        <Stack.Screen 
+          name="pages/instructionsPage"
+          options={{
+            presentation: 'transparentModal',
+            animation: 'slide_from_bottom',
+            headerShown: false
+          }}
+        />
       </Stack>;
 };
