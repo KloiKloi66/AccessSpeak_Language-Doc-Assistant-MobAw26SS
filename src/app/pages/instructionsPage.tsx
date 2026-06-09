@@ -1,7 +1,7 @@
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { Link, router } from 'expo-router';
+import { router } from 'expo-router';
 
-export default function Home() {
+export default function InstructionsPage() {
 
   return (
     <View style={styles.mainView}>
