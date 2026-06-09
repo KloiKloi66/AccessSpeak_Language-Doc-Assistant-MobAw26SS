@@ -1,20 +1,11 @@
 import { View, StyleSheet, ScrollView, Text } from 'react-native';
 
-import PageTitle from '../../components/page-title.component';
-import Button from '../../components/button.component';
-
-import Entypo from '@expo/vector-icons/Entypo';
-import { router } from 'expo-router';
+import PageHeader from '../../components/page-header.component';
 
 export default function HistoryPage() {
   return (
     <View style={styles.mainView}>
-      <View style={styles.titleArea}>
-        <Button style={styles.back} onPress={() => router.back()} shape='circle'>
-          <Entypo name="chevron-thin-left" size={24} color="black" />
-        </Button>
-        <PageTitle>Verlauf</PageTitle>
-      </View>
+      <PageHeader>Verlauf</PageHeader>
       <View style={styles.historyArea}>
         <View style={styles.displayOptions}>
 
@@ -31,16 +22,6 @@ const styles = StyleSheet.create({
   mainView: {
     flex: 1,
     backgroundColor: 'black'
-  },
-  titleArea: {
-    height: 50,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  back: {
-    position: "absolute",
-    left: 16,
   },
   historyArea: {
     flex: 1,
