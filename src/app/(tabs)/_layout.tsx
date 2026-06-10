@@ -1,6 +1,11 @@
 import { StyleSheet, View } from 'react-native';
 import { Tabs } from 'expo-router';
 
+import Ionicons from '@expo/vector-icons/Ionicons';
+import Feather from '@expo/vector-icons/Feather';
+import Entypo from '@expo/vector-icons/Entypo';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+
 export default function TabsLayout() {
   return (
     <View style={styles.mainView}>
@@ -8,30 +13,61 @@ export default function TabsLayout() {
         screenOptions={
           { 
             headerShown: false,
+            tabBarShowLabel: false,
+            tabBarIconStyle: {
+              marginTop: 5
+            },
           }
         }>
         <Tabs.Screen
           name='index'
           options={{
-            title: "Home"
+            title: "Home",
+            tabBarIcon: ({color}) => (
+              <Ionicons 
+                name="home-outline" 
+                size={24} 
+                color={color}
+              />
+            )
           }}
         />
         <Tabs.Screen
           name='cameraPage'
           options={{
-            title: "Kamera"
+            title: "Kamera",
+            tabBarIcon: ({color}) => (
+              <Entypo 
+                name="camera" 
+                size={24} 
+                color={color}
+              />
+            )
           }}
         />
         <Tabs.Screen
           name='historyPage'
           options={{
-            title: "History"
+            title: "History",
+            tabBarIcon: ({color}) => (
+              <Feather 
+              name="list" 
+              size={24} 
+              color={color} />
+            )
           }}
         />
         <Tabs.Screen
           name='chatBotPage'
           options={{
-            title: "ChatBot"
+            title: "ChatBot",
+            tabBarIcon: ({color}) => (
+              <MaterialCommunityIcons 
+                name="robot-dead-outline" 
+                size={24} 
+                color={color}
+              />
+            )
           }}
         />
       </Tabs>
