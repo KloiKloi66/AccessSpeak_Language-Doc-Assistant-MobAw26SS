@@ -17,9 +17,9 @@ export default function TabsLayout() {
           }}
         />
         <Tabs.Screen
-          name='uploadPage'
+          name='cameraPage'
           options={{
-            title: "Upload"
+            title: "Kamera"
           }}
         />
         <Tabs.Screen
