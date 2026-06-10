@@ -37,45 +37,41 @@ export default function CameraPage() {
     <View style={styles.mainView}>
       <PageHeader>Kamera</PageHeader>
 
-      {(() => {
-      if (permission.granted) {
-        return (
-          <>
-            <View style={styles.cameraContainer}>
-              <CameraView
-                ref={cameraRef}
-                style={styles.camera}
-                facing="back"
-              />
-            </View>
+      {permission.granted ?
+        <>
+          <View style={styles.cameraContainer}>
+            <CameraView
+              ref={cameraRef}
+              style={styles.camera}
+              facing="back"
+            />
+          </View>
 
-            <View style={styles.buttonArea}>
-              <Button
-                style={styles.button}
-                size='medium'
-              >
-                <SimpleLineIcons name="picture" size={24} color="black" />
-              </Button>
+          <View style={styles.buttonArea}>
+            <Button
+              style={styles.button}
+              size='medium'
+            >
+              <SimpleLineIcons name="picture" size={24} color="black" />
+            </Button>
 
-              <Button 
-                onPress={takePhoto}
-                style={styles.button}
-                size='large'
-              >
-                <Feather name="camera" size={28} color="black" />
-              </Button>
+            <Button 
+              onPress={takePhoto}
+              style={styles.button}
+              size='large'
+            >
+              <Feather name="camera" size={28} color="black" />
+            </Button>
 
-              <Button 
-                style={styles.button}
-                size='medium'
-              >
-                <MaterialCommunityIcons name="robot-dead-outline" size={24} color="black" />
-              </Button>
-            </View>
-          </>
-        );
-      } else {
-        return (
+            <Button 
+              style={styles.button}
+              size='medium'
+            >
+              <MaterialCommunityIcons name="robot-dead-outline" size={24} color="black" />
+            </Button>
+          </View>
+        </>
+      :
         <View style={styles.permissionView}>
           <PermissionCard 
             title='Kamerazugriff aktivieren?'
@@ -83,9 +79,7 @@ export default function CameraPage() {
             grantPermissionOnPress={requestPermission}
           ></PermissionCard>
         </View>
-        );
       }
-    })()}
     </View>
   );
 }
