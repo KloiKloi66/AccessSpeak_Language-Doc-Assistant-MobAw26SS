@@ -36,5 +36,12 @@ export default function RootLayout() {
             headerShown: false
           }}
         />
+        <Stack.Screen 
+          name="pages/translationPage"
+          options={{
+            animation: 'slide_from_bottom',
+            headerShown: false
+          }}
+        />
       </Stack>;
 };

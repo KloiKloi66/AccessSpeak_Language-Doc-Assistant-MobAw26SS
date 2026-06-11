@@ -10,6 +10,7 @@ export default function InstructionsPage() {
       <View style={styles.instructionsPage}>
         <Text style={styles.temp}>wie die anleitung aussieht, folgt noch</Text>
         <Text>vielleicht ein x-button und swipe down funktion zusätzlich zum zurück gehen?</Text>
+        <Text>way to add tabBar on StackScreens still missing</Text>
       </View>
     </View>
   );

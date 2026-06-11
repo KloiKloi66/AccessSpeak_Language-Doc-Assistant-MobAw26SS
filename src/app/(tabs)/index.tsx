@@ -22,10 +22,12 @@ export default function HomePage() {
               title="Kamera"
               subtitle="Text aufnehmen"
             />
-            <FunctionsCard
-              title="Übersetzen"
-              subtitle="Schnell und einfach"
-            />
+            <Link href={{pathname: "/pages/translationPage"}} asChild>
+              <FunctionsCard
+                title="Übersetzen"
+                subtitle="Schnell und einfach"
+              />
+            </Link>
           </View>
           <View style={styles.functionRow}>
             <FunctionsCard
