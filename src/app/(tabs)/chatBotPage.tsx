@@ -3,10 +3,14 @@ import {
   View,
   StyleSheet,
   TextInput,
-  TouchableOpacity,
   Text,
   FlatList,
 } from 'react-native';
+
+import PageHeader from '../../components/page-header.component';
+import Button from '../../components/button.component';
+
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 export default function ChatBotPage() {
   const [message, setMessage] = useState('');
@@ -32,7 +36,7 @@ export default function ChatBotPage() {
       console.log('FETCH START');
 
       const response = await fetch(
-        'http://*Hier lokale IP Adresse Einfügen:8000/chat',
+        'http://10.149.133.22:8000/chat',
         {
           method: 'POST',
           headers: {
@@ -65,6 +69,7 @@ export default function ChatBotPage() {
 
   return (
     <View style={styles.mainView}>
+      <PageHeader>Chatbot</PageHeader>
       <FlatList
         data={messages}
         keyExtractor={item => item.id}
@@ -90,12 +95,9 @@ export default function ChatBotPage() {
           style={styles.input}
         />
 
-        <TouchableOpacity
-          style={styles.sendButton}
-          onPress={sendMessage}
-        >
-          <Text>Senden</Text>
-        </TouchableOpacity>
+        <Button onPress={sendMessage}>
+          <FontAwesome name="send-o" size={24} color="black" />
+        </Button>
       </View>
     </View>
   );
@@ -104,44 +106,35 @@ export default function ChatBotPage() {
 const styles = StyleSheet.create({
   mainView: {
     flex: 1,
-    padding: 10,
+    backgroundColor: 'black',
+    paddingVertical: 10
   },
-
   messageBubble: {
     padding: 10,
     borderRadius: 10,
     marginVertical: 5,
     maxWidth: '80%',
   },
-
   userBubble: {
     alignSelf: 'flex-end',
     backgroundColor: '#d1ffd6',
   },
-
   botBubble: {
     alignSelf: 'flex-start',
     backgroundColor: '#eeeeee',
   },
-
   inputContainer: {
+    height: 50,
     flexDirection: 'row',
-    marginTop: 10,
-  },
-
-  input: {
-    flex: 1,
+    alignItems: 'center',
+    borderRadius: 15,
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 10,
+    marginTop: 10,
+    paddingHorizontal: 4
+  },
+  input: {
+    flex: 1,
     paddingHorizontal: 10,
-  },
-
-  sendButton: {
-    justifyContent: 'center',
-    paddingHorizontal: 15,
-    marginLeft: 10,
-    borderRadius: 10,
-    backgroundColor: '#ddd',
-  },
+  }
 });
