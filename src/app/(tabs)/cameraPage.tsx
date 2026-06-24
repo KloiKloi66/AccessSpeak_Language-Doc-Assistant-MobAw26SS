@@ -1,116 +1,100 @@
 import { useRef, useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 
 import PageHeader from '../../components/page-header.component';
 import PermissionCard from '../../components/permission-card.component';
 import Button from '../../components/button.component';
+import { COLORS, RADIUS, SPACING } from '../../theme';
 
-import Feather from '@expo/vector-icons/Feather';
-import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 
 export default function CameraPage() {
   const cameraRef = useRef<CameraView>(null);
-
   const [permission, requestPermission] = useCameraPermissions();
   const [photoUri, setPhotoUri] = useState<string | null>(null);
 
-  if (!permission) {
-    return <View />;
-  }
+  if (!permission) return <View />;
 
   async function takePhoto() {
-    if (!cameraRef.current) {
-      return;
-    }
-
-    const photo = await cameraRef.current.takePictureAsync({
-      // check if compression for maximum quality is "too expensive"
-      quality: 1,
-    });
-
+    if (!cameraRef.current) return;
+    const photo = await cameraRef.current.takePictureAsync({ quality: 1 });
     setPhotoUri(photo.uri);
   }
 
   return (
-    <View style={styles.mainView}>
+    <View style={styles.root}>
       <PageHeader>Kamera</PageHeader>
 
-      {permission.granted ?
+      {permission.granted ? (
         <>
           <View style={styles.cameraContainer}>
-            <CameraView
-              ref={cameraRef}
-              style={styles.camera}
-              facing="back"
-            />
+            <CameraView ref={cameraRef} style={styles.camera} facing="back" />
           </View>
 
-          <View style={styles.buttonArea}>
-            <Button
-              style={styles.button}
-              size='medium'
-            >
-              <SimpleLineIcons name="picture" size={24} color="black" />
+          <View style={styles.controls}>
+            <Button size="medium" style={styles.sideBtn}>
+              <SimpleLineIcons name="picture" size={22} color={COLORS.text} />
             </Button>
 
-            <Button 
-              onPress={takePhoto}
-              style={styles.button}
-              size='large'
-            >
-              <Feather name="camera" size={28} color="black" />
+            <Button size="large" onPress={takePhoto} style={styles.shutterBtn}>
+              <Ionicons name="camera-outline" size={30} color={COLORS.text} />
             </Button>
 
-            <Button 
-              style={styles.button}
-              size='medium'
-            >
-              <MaterialCommunityIcons name="robot-dead-outline" size={24} color="black" />
+            <Button size="medium" style={styles.sideBtn}>
+              <MaterialCommunityIcons name="robot-outline" size={22} color={COLORS.text} />
             </Button>
           </View>
         </>
-      :
+      ) : (
         <View style={styles.permissionView}>
-          <PermissionCard 
-            title='Kamerazugriff aktivieren?'
-            description='Kamerazugriff muss gewährt werden, um die Kamera Funktion zu nutzen.'
+          <PermissionCard
+            title="Kamerazugriff aktivieren?"
+            description="Kamerazugriff muss gewährt werden, um die Kamera Funktion zu nutzen."
             grantPermissionOnPress={requestPermission}
-          ></PermissionCard>
+          />
         </View>
-      }
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  mainView: {
+  root: {
     flex: 1,
-    backgroundColor: 'black',
+    backgroundColor: COLORS.background,
   },
   cameraContainer: {
     flex: 1,
-    marginTop: 20
+    marginTop: SPACING.sm,
+    overflow: 'hidden',
   },
   camera: {
     flex: 1,
   },
-  buttonArea: {
-    height: 140,
-    justifyContent: 'center',
-    alignItems: 'center',
+  controls: {
+    height: 130,
     flexDirection: 'row',
-    gap: 30,
-  },
-  button: {
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: SPACING.lg,
+    backgroundColor: COLORS.background,
+  },
+  shutterBtn: {
+    width: 70,
+    height: 70,
+    borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.surface,
+  },
+  sideBtn: {
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.md,
   },
   permissionView: {
     flex: 1,
-    backgroundColor: 'black',
     justifyContent: 'center',
     alignItems: 'center',
-  }
+  },
 });

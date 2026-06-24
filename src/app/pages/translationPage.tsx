@@ -1,87 +1,280 @@
-import { View, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
-import PageHeader from '../../components/page-header.component';
-import Button from '../../components/button.component';
+import { useState, useEffect, useRef } from 'react';
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Image,
+  TextInput,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  Clipboard,
+} from 'react-native';
+import { router } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { COLORS, RADIUS, SPACING } from '../../theme';
 
-import Octicons from '@expo/vector-icons/Octicons';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import Feather from '@expo/vector-icons/Feather';
+import Entypo from '@expo/vector-icons/Entypo';
+
+type Language = { name: string; flag: any };
+
+const LANGUAGES: Language[] = [
+  { name: 'Englisch', flag: require('../../../assets/temp/uk.jpg') },
+  { name: 'Deutsch',  flag: require('../../../assets/temp/deutschland.png') },
+];
 
 export default function TranslationPage() {
+  const insets = useSafeAreaInsets();
+  const [sourceLang, setSourceLang] = useState<Language>(LANGUAGES[0]);
+  const [targetLang, setTargetLang] = useState<Language>(LANGUAGES[1]);
+  const [inputText,  setInputText]  = useState('');
+  const [outputText, setOutputText] = useState('');
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  function switchLanguages() {
-    console.log('switched languages')
-    // functionality needs to be added
+  // Auto-translate with debounce (implementation follows later)
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (!inputText.trim()) { setOutputText(''); return; }
+    debounceRef.current = setTimeout(() => {
+      // TODO: echten API-Aufruf einfügen
+      setOutputText(`[${targetLang.name}] ${inputText}`);
+    }, 800);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [inputText, targetLang]);
+
+  function swap() {
+    setSourceLang(targetLang);
+    setTargetLang(sourceLang);
+    setInputText(outputText);
+    setOutputText(inputText);
   }
 
   return (
-    <View style={styles.mainView}>
-      <PageHeader>Übersetzung</PageHeader>
-
-      <View style={styles.languageSelection}>
-        <TouchableOpacity style={styles.languageSelector}>
-          <Image 
-            source={require("../../../assets/temp/deutschland.png")}
-            style={styles.img}
-          ></Image>
-          <Text style={styles.languageTitle}>Deutsch</Text>
+    <KeyboardAvoidingView
+      style={[styles.root, { paddingTop: insets.top + 8 }]}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      {/* ── Custom header ── */}
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} activeOpacity={0.7}>
+          <Entypo name="chevron-thin-left" size={22} color={COLORS.text} />
         </TouchableOpacity>
+        <View style={styles.headerTitleRow}>
+          <Text style={styles.headerTitle}>Übersetzen</Text>
+          <MaterialCommunityIcons name="translate" size={28} color={COLORS.text} />
+        </View>
+        <View style={styles.backBtn} />
+      </View>
 
-        <Button onPress={switchLanguages} shape='circle'>
-          <Octicons name="arrow-switch" size={24} color="white" />
-        </Button>
+      {/* ── Source card ── */}
+      <View style={styles.card}>
+        {/* Language pill */}
+        <View style={styles.cardTopRow}>
+          <TouchableOpacity style={styles.langPill} activeOpacity={0.7}>
+            <Image source={sourceLang.flag} style={styles.flagSmall} />
+            <Text style={styles.langName}>{sourceLang.name}</Text>
+            <Ionicons name="chevron-down" size={16} color={COLORS.textMuted} />
+          </TouchableOpacity>
+          <View style={styles.cardIcons}>
+            <TouchableOpacity activeOpacity={0.7}>
+              <Feather name="mic" size={20} color={COLORS.textMuted} />
+            </TouchableOpacity>
+            <TouchableOpacity activeOpacity={0.7}>
+              <Ionicons name="volume-medium-outline" size={20} color={COLORS.textMuted} />
+            </TouchableOpacity>
+          </View>
+        </View>
 
-        <TouchableOpacity style={styles.languageSelector}>
-          <Image 
-            source={require("../../../assets/temp/uk.jpg")}
-            style={styles.img}
-          ></Image>
-          <Text style={styles.languageTitle}>Englisch</Text>
+        <TextInput
+          style={styles.cardText}
+          value={inputText}
+          onChangeText={setInputText}
+          placeholder="Text eingeben…"
+          placeholderTextColor={COLORS.textMuted}
+          multiline
+          textAlignVertical="top"
+        />
+      </View>
+
+      {/* ── Swap button (overlaps both cards) ── */}
+      <View style={styles.swapRow}>
+        <TouchableOpacity style={styles.swapBtn} onPress={swap} activeOpacity={0.8}>
+          <MaterialCommunityIcons name="swap-vertical" size={28} color={COLORS.text} />
         </TouchableOpacity>
       </View>
 
-      <View style={styles.translationArea}>
-        <Text style={{color:'red', fontSize: 42, fontWeight: 'bold'}}>coming soon</Text>
+      {/* ── Target card ── */}
+      <View style={styles.card}>
+        {/* Language pill */}
+        <View style={styles.cardTopRow}>
+          <TouchableOpacity style={styles.langPill} activeOpacity={0.7}>
+            <Image source={targetLang.flag} style={styles.flagSmall} />
+            <Text style={styles.langName}>{targetLang.name}</Text>
+            <Ionicons name="chevron-down" size={16} color={COLORS.textMuted} />
+          </TouchableOpacity>
+          <View style={styles.cardIcons}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => outputText && Clipboard.setString(outputText)}
+            >
+              <Ionicons name="copy-outline" size={20} color={COLORS.textMuted} />
+            </TouchableOpacity>
+            <TouchableOpacity activeOpacity={0.7}>
+              <Ionicons name="volume-medium-outline" size={20} color={COLORS.textMuted} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+          {outputText ? (
+            <Text style={styles.cardText}>{outputText}</Text>
+          ) : (
+            <Text style={[styles.cardText, { color: COLORS.textMuted, fontStyle: 'italic' }]}>
+              Übersetzung erscheint hier
+            </Text>
+          )}
+        </ScrollView>
       </View>
-    </View>
+
+      {/* ── Bottom action buttons ── */}
+      <View style={styles.actions}>
+        <TouchableOpacity style={styles.actionBtn} activeOpacity={0.7}>
+          <Ionicons name="cloud-upload-outline" size={30} color={COLORS.text} />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={[styles.actionBtn, styles.actionBtnPrimary]} activeOpacity={0.7}>
+          <Feather name="mic" size={32} color={COLORS.text} />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.actionBtn} activeOpacity={0.7}>
+          <Ionicons name="camera-outline" size={30} color={COLORS.text} />
+        </TouchableOpacity>
+      </View>
+    </KeyboardAvoidingView>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  mainView: {
+  root: {
     flex: 1,
-    paddingTop: 40,
-    paddingBlock: 15,
-    paddingHorizontal: 15,
-    backgroundColor: 'black'
+    backgroundColor: COLORS.background,
+    paddingHorizontal: SPACING.lg,
+    paddingBottom: SPACING.md,
+    gap: SPACING.sm,
   },
-  languageSelection: {
-    height: 160, 
+
+  // Header
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 20,
-    backgroundColor: 'grey',
-    marginVertical: 20,
-    borderRadius: 20,
-    padding: 20
+    justifyContent: 'space-between',
+    paddingBottom: SPACING.xs,
   },
-  languageSelector: {
-    flex: 1,
+  backBtn: {
+    width: 42,
+    height: 42,
+    borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.surface,
+    alignItems: 'center',
     justifyContent: 'center',
-    alignItems: 'center'
   },
-  img: {
-    height: 90,
-    width: 90,
-    borderRadius: 45
+  headerTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
-  languageTitle: {
-    color: 'white',
-    fontSize: 24,
-    fontWeight: 'bold'
+  headerTitle: {
+    color: COLORS.text,
+    fontSize: 32,
+    fontWeight: '700',
   },
-  translationArea: {
+
+  // Cards – equal flex so both same height
+  card: {
     flex: 1,
-    borderRadius: 20,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.lg,
+    padding: SPACING.md,
+    gap: SPACING.sm,
+  },
+  cardTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  langPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: COLORS.surfaceLight,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: RADIUS.pill,
+  },
+  flagSmall: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+  },
+  langName: {
+    color: COLORS.text,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  cardIcons: {
+    flexDirection: 'row',
+    gap: SPACING.md,
+    alignItems: 'center',
+  },
+  cardText: {
+    flex: 1,
+    color: COLORS.text,
+    fontSize: 18,
+    lineHeight: 28,
+    textAlignVertical: 'top',
+    paddingTop: 0,
+  },
+
+  // Swap button
+  swapRow: {
+    alignItems: 'center',
+    marginVertical: -20,
+    zIndex: 10,
+  },
+  swapBtn: {
+    width: 52,
+    height: 52,
+    borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.background,
+    borderWidth: 3,
+    borderColor: COLORS.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  // Bottom actions
+  actions: {
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'grey'
-  }
+    gap: 32,
+    paddingTop: SPACING.sm,
+  },
+  actionBtn: {
+    width: 60,
+    height: 60,
+    borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  actionBtnPrimary: {
+    width: 72,
+    height: 72,
+    backgroundColor: COLORS.accent,
+  },
 });

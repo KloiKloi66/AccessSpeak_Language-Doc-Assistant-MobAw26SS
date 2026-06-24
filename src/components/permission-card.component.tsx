@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { COLORS, RADIUS, SPACING } from '../theme';
 
 type Props = {
   title: string;
@@ -8,28 +9,22 @@ type Props = {
   revokePermissionOnPress?: () => void;
 };
 
-export default function PermissionCard({title, description, grantPermissionOnPress}: Props) {
+export default function PermissionCard({
+  title,
+  description,
+  grantPermissionOnPress,
+}: Props) {
   return (
-    <View style={styles.mainView}>
+    <View style={styles.card}>
       <Text style={styles.title}>{title}</Text>
-
       <Text style={styles.description}>{description}</Text>
-
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.permissionButton}
-          onPress={grantPermissionOnPress}
-        >
-          <Text style={styles.buttonlabel}>Abbrechen</Text>
+      <View style={styles.buttonRow}>
+        <TouchableOpacity style={styles.btn} onPress={grantPermissionOnPress}>
+          <Text style={[styles.btnLabel, styles.cancel]}>Abbrechen</Text>
         </TouchableOpacity>
-
-        <View style={styles.separator}></View>
-
-        <TouchableOpacity
-          style={styles.permissionButton}
-          onPress={grantPermissionOnPress}
-        >
-          <Text style={styles.buttonlabel}>Aktivieren</Text>
+        <View style={styles.sep} />
+        <TouchableOpacity style={styles.btn} onPress={grantPermissionOnPress}>
+          <Text style={[styles.btnLabel, styles.confirm]}>Aktivieren</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -37,52 +32,52 @@ export default function PermissionCard({title, description, grantPermissionOnPre
 }
 
 const styles = StyleSheet.create({
-  mainView: {
-    backgroundColor: '#1F1A17',
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    borderRadius: 20,
-    borderColor: 'white',
+  card: {
+    backgroundColor: COLORS.surface,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.md,
+    borderRadius: RADIUS.lg,
+    borderColor: COLORS.border,
     borderWidth: 1,
-    justifyContent: 'space-between',
     alignItems: 'center',
     minHeight: 160,
-    width: 300
+    width: 300,
+    gap: SPACING.sm,
   },
-
-  permissionView: {
-    flex: 1,
-    backgroundColor: 'black',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
   title: {
-    color: 'white',
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 1,
+    color: COLORS.text,
+    fontSize: 22,
+    fontWeight: '700',
+    textAlign: 'center',
   },
   description: {
-    color: 'white',
+    color: COLORS.textMuted,
     fontSize: 14,
-    textAlign: 'center'
+    textAlign: 'center',
+    flex: 1,
   },
-  buttonContainer: {
+  buttonRow: {
     flexDirection: 'row',
-    gap: 5
+    alignItems: 'center',
+    gap: SPACING.xs,
   },
-  permissionButton: {
-    padding: 12
+  sep: {
+    width: 1,
+    height: 24,
+    backgroundColor: COLORS.border,
   },
-  buttonlabel: {
-    color: 'white',
-    fontSize: 20
+  btn: {
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
   },
-  separator: {
-    backgroundColor: 'grey',
-    alignSelf: 'center',
-    height: '25%',
-    width: 1
-  }
+  btnLabel: {
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  cancel: {
+    color: COLORS.textMuted,
+  },
+  confirm: {
+    color: COLORS.text,
+  },
 });

@@ -5,20 +5,21 @@ import {
   TextInput,
   Text,
   FlatList,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 
 import PageHeader from '../../components/page-header.component';
-import Button from '../../components/button.component';
+import { COLORS, RADIUS, SPACING } from '../../theme';
 
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function ChatBotPage() {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<any[]>([]);
 
   const sendMessage = async () => {
-    console.log('BUTTON GEDRÜCKT');
-
     if (!message.trim()) return;
 
     const userMessage = {
@@ -28,31 +29,17 @@ export default function ChatBotPage() {
     };
 
     setMessages(prev => [...prev, userMessage]);
-
     const currentMessage = message;
     setMessage('');
 
     try {
-      console.log('FETCH START');
-
-      const response = await fetch(
-        'http://10.149.133.22:8000/chat',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            message: currentMessage,
-          }),
-        }
-      );
-
-      console.log('STATUS:', response.status);
+      const response = await fetch('http://10.181.218.37:8000/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: currentMessage }),
+      });
 
       const data = await response.json();
-
-      console.log('DATA:', data);
 
       const botMessage = {
         id: (Date.now() + 1).toString(),
@@ -61,80 +48,121 @@ export default function ChatBotPage() {
       };
 
       setMessages(prev => [...prev, botMessage]);
-
     } catch (error) {
       console.log('FEHLER:', error);
     }
   };
 
   return (
-    <View style={styles.mainView}>
+    <KeyboardAvoidingView
+      style={styles.root}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={10}
+    >
       <PageHeader>Chatbot</PageHeader>
+
       <FlatList
         data={messages}
         keyExtractor={item => item.id}
+        contentContainerStyle={styles.messageList}
         renderItem={({ item }) => (
           <View
             style={[
-              styles.messageBubble,
-              item.sender === 'user'
-                ? styles.userBubble
-                : styles.botBubble,
+              styles.bubble,
+              item.sender === 'user' ? styles.userBubble : styles.botBubble,
             ]}
           >
-            <Text>{item.text}</Text>
+            <Text
+              style={[
+                styles.bubbleText,
+                item.sender === 'user' ? styles.userText : styles.botText,
+              ]}
+            >
+              {item.text}
+            </Text>
           </View>
         )}
       />
 
-      <View style={styles.inputContainer}>
+      <View style={styles.inputRow}>
         <TextInput
           value={message}
           onChangeText={setMessage}
-          placeholder="Nachricht eingeben..."
+          placeholder="Texteingabe"
+          placeholderTextColor={COLORS.textMuted}
           style={styles.input}
+          returnKeyType="send"
+          onSubmitEditing={sendMessage}
         />
-
-        <Button onPress={sendMessage}>
-          <FontAwesome name="send-o" size={24} color="black" />
-        </Button>
+        <TouchableOpacity style={styles.sendBtn} onPress={sendMessage} activeOpacity={0.7}>
+          <Ionicons name="arrow-forward" size={22} color={COLORS.text} />
+        </TouchableOpacity>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  mainView: {
+  root: {
     flex: 1,
-    backgroundColor: 'black',
-    paddingVertical: 10
+    backgroundColor: COLORS.background,
+    paddingHorizontal: SPACING.lg,
+    paddingBottom: SPACING.md,
   },
-  messageBubble: {
-    padding: 10,
-    borderRadius: 10,
-    marginVertical: 5,
+  messageList: {
+    flexGrow: 1,
+    paddingVertical: SPACING.sm,
+    gap: SPACING.sm,
+  },
+  bubble: {
     maxWidth: '80%',
-  },
-  userBubble: {
-    alignSelf: 'flex-end',
-    backgroundColor: '#d1ffd6',
+    borderRadius: RADIUS.md,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
   },
   botBubble: {
     alignSelf: 'flex-start',
-    backgroundColor: '#eeeeee',
+    backgroundColor: COLORS.surface,
+    borderTopLeftRadius: 4,
   },
-  inputContainer: {
-    height: 50,
+  userBubble: {
+    alignSelf: 'flex-end',
+    backgroundColor: COLORS.accent,
+    borderTopRightRadius: 4,
+  },
+  bubbleText: {
+    fontSize: 16,
+    lineHeight: 22,
+  },
+  botText: {
+    color: COLORS.text,
+  },
+  userText: {
+    color: COLORS.text,
+  },
+
+  // Input row
+  inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    marginTop: 10,
-    paddingHorizontal: 4
+    gap: SPACING.sm,
+    marginTop: SPACING.sm,
   },
   input: {
     flex: 1,
-    paddingHorizontal: 10,
-  }
+    height: 52,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.pill,
+    paddingHorizontal: SPACING.lg,
+    color: COLORS.text,
+    fontSize: 16,
+  },
+  sendBtn: {
+    width: 52,
+    height: 52,
+    borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.accent,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

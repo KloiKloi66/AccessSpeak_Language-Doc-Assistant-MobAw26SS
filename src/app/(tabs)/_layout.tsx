@@ -3,84 +3,79 @@ import { Tabs } from 'expo-router';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
-import Entypo from '@expo/vector-icons/Entypo';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+
+import { COLORS } from '../../theme';
 
 export default function TabsLayout() {
   return (
-    <View style={styles.mainView}>
+    <View style={styles.root}>
       <Tabs
-        screenOptions={
-          { 
-            headerShown: false,
-            tabBarShowLabel: false,
-            tabBarIconStyle: {
-              marginTop: 5
-            },
-          }
-        }>
+        screenOptions={{
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarStyle: styles.tabBar,
+          tabBarActiveTintColor: COLORS.text,
+          tabBarInactiveTintColor: 'rgba(255,255,255,0.4)',
+          tabBarItemStyle: styles.tabItem,
+        }}
+      >
         <Tabs.Screen
-          name='index'
+          name="index"
           options={{
-            title: "Home",
-            tabBarIcon: ({color}) => (
-              <Ionicons 
-                name="home-outline" 
-                size={24} 
-                color={color}
-              />
-            )
+            title: 'Home',
+            tabBarIcon: ({ color }) => (
+              <Ionicons name="home-outline" size={26} color={color} />
+            ),
           }}
         />
         <Tabs.Screen
-          name='cameraPage'
+          name="cameraPage"
           options={{
-            title: "Kamera",
-            tabBarIcon: ({color}) => (
-              <Entypo 
-                name="camera" 
-                size={24} 
-                color={color}
-              />
-            )
+            title: 'Kamera',
+            tabBarIcon: ({ color }) => (
+              <Feather name="upload" size={24} color={color} />
+            ),
           }}
         />
         <Tabs.Screen
-          name='historyPage'
+          name="historyPage"
           options={{
-            title: "History",
-            tabBarIcon: ({color}) => (
-              <Feather 
-              name="list" 
-              size={24} 
-              color={color} />
-            )
+            title: 'Verlauf',
+            tabBarIcon: ({ color }) => (
+              <Feather name="list" size={26} color={color} />
+            ),
           }}
         />
         <Tabs.Screen
-          name='chatBotPage'
+          name="chatBotPage"
           options={{
-            title: "ChatBot",
-            tabBarIcon: ({color}) => (
-              <MaterialCommunityIcons 
-                name="robot-dead-outline" 
-                size={24} 
-                color={color}
-              />
-            )
+            title: 'ChatBot',
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="robot-outline" size={26} color={color} />
+            ),
           }}
         />
       </Tabs>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  mainView: {
+  root: {
     flex: 1,
-    paddingTop: 40,
-    paddingBlock: 15,
-    paddingHorizontal: 15,
-    backgroundColor: 'black'
-  }
+    backgroundColor: COLORS.background,
+  },
+  tabBar: {
+    backgroundColor: COLORS.background,
+    borderTopWidth: 0,
+    elevation: 0,
+    shadowOpacity: 0,
+    height: 70,
+    paddingHorizontal: 10,
+  },
+  tabItem: {
+    marginVertical: 8,
+    borderRadius: 16,
+  },
 });
