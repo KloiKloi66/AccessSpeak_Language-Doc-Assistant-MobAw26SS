@@ -51,3 +51,6 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+# MongoDB
+**/mongo-data/
