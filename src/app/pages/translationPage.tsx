@@ -8,6 +8,8 @@ import {
   TextInput,
   ScrollView,
   KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
   Platform,
   Clipboard,
 } from 'react-native';
@@ -35,16 +37,32 @@ export default function TranslationPage() {
   const [outputText, setOutputText] = useState('');
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Auto-translate with debounce (implementation follows later)
+  // Auto-translate with debounce
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     if (!inputText.trim()) { setOutputText(''); return; }
-    debounceRef.current = setTimeout(() => {
-      // TODO: echten API-Aufruf einfügen
-      setOutputText(`[${targetLang.name}] ${inputText}`);
+
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const response = await fetch('http://192.168.0.234:8000/translate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            text: inputText,
+            source_lang: sourceLang.name,
+            target_lang: targetLang.name,
+          }),
+        });
+        const data = await response.json();
+        setOutputText(data.translation ?? '');
+      } catch (e) {
+        console.log('Translate error:', e);
+        setOutputText('Übersetzung fehlgeschlagen.');
+      }
     }, 800);
+
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-  }, [inputText, targetLang]);
+  }, [inputText, sourceLang, targetLang]);
 
   function swap() {
     setSourceLang(targetLang);
@@ -58,16 +76,19 @@ export default function TranslationPage() {
       style={[styles.root, { paddingTop: insets.top + 8 }]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.innerRoot}>
+
       {/* ── Custom header ── */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} activeOpacity={0.7}>
           <Entypo name="chevron-thin-left" size={22} color={COLORS.text} />
         </TouchableOpacity>
-        <View style={styles.headerTitleRow}>
+        {/* Title absolutely centered, doesn't affect flex siblings */}
+        <View style={styles.headerTitleRow} pointerEvents="none">
           <Text style={styles.headerTitle}>Übersetzen</Text>
           <MaterialCommunityIcons name="translate" size={28} color={COLORS.text} />
         </View>
-        <View style={styles.backBtn} />
       </View>
 
       {/* ── Source card ── */}
@@ -154,6 +175,9 @@ export default function TranslationPage() {
           <Ionicons name="camera-outline" size={30} color={COLORS.text} />
         </TouchableOpacity>
       </View>
+
+      </View>
+      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 }
@@ -164,6 +188,9 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
     paddingHorizontal: SPACING.lg,
     paddingBottom: SPACING.md,
+  },
+  innerRoot: {
+    flex: 1,
     gap: SPACING.sm,
   },
 
@@ -173,6 +200,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingBottom: SPACING.xs,
+    position: 'relative',
   },
   backBtn: {
     width: 42,
@@ -183,8 +211,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   headerTitleRow: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: 8,
   },
   headerTitle: {
@@ -263,6 +295,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 32,
     paddingTop: SPACING.sm,
+    paddingBottom: SPACING.lg,
   },
   actionBtn: {
     width: 60,
