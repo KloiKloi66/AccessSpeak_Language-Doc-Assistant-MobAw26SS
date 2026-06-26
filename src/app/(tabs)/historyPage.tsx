@@ -1,13 +1,11 @@
 import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Link } from 'expo-router';
 import { useState } from 'react';
-
 import PageHeader from '../../components/page-header.component';
 import HistoryEntryList from '../../components/history-entry-list.component';
 import HistoryEntryGrid from '../../components/history-entry-grid.component';
 import Button from '../../components/button.component';
 import { COLORS, RADIUS, SPACING } from '../../theme';
-
 import Entypo from '@expo/vector-icons/Entypo';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
@@ -40,8 +38,8 @@ export default function HistoryPage() {
   return (
     <View style={styles.mainView}>
       <PageHeader>Verlauf</PageHeader>
-
       <View style={styles.historyArea}>
+
         {/* Toggle buttons */}
         <View style={styles.displayOptions}>
           <Button
