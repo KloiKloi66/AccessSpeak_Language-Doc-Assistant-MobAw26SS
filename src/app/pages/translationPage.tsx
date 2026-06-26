@@ -44,7 +44,7 @@ export default function TranslationPage() {
 
     debounceRef.current = setTimeout(async () => {
       try {
-        const response = await fetch('http://192.168.0.234:8000/translate', {
+        const response = await fetch('http://192.168.178.140:8000/translate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
