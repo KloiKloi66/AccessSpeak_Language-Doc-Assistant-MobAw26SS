@@ -1,163 +1,139 @@
-import { View, StyleSheet, ScrollView, Text, TouchableOpacity } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { Link } from 'expo-router';
+import { useState } from 'react';
 
-import PageTitle from '../../components/page-title.component';
+import PageHeader from '../../components/page-header.component';
+import HistoryEntryList from '../../components/history-entry-list.component';
+import HistoryEntryGrid from '../../components/history-entry-grid.component';
+import Button from '../../components/button.component';
 import { COLORS, RADIUS, SPACING } from '../../theme';
 
+import Entypo from '@expo/vector-icons/Entypo';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import Feather from '@expo/vector-icons/Feather';
 
-type Difficulty = 'schwierig' | 'mittel' | 'leicht';
-type DocType = 'document' | 'image';
-
-const ITEMS: { id: string; name: string; difficulty: Difficulty; date: string; type: DocType }[] = [
-  { id: '1', name: 'Finanzamt', difficulty: 'schwierig', date: '12.2.2026', type: 'document' },
-  { id: '2', name: 'Whatsapp', difficulty: 'leicht', date: '12.2.2026', type: 'document' },
-  { id: '3', name: 'Sportkurs', difficulty: 'leicht', date: '12.2.2026', type: 'document' },
-  { id: '4', name: 'Urlaub', difficulty: 'mittel', date: '12.2.2026', type: 'image' },
-  { id: '5', name: 'Vertrag', difficulty: 'schwierig', date: '12.2.2026', type: 'document' },
-  { id: '6', name: 'Hausordnung', difficulty: 'mittel', date: '12.2.2026', type: 'document' },
+const testData = [
+  { title: 'Finanzamt', difficulty: 'mittel', type: 'document', date: '12.02.2026', id: 0 },
+  { title: 'Whatsapp', difficulty: 'leicht', type: 'image', date: '22.11.2024', id: 1 },
+  { title: 'Steuererklärung', difficulty: 'schwierig', type: 'document', date: '02.12.2025', id: 2 },
+  { title: 'Personalausweis', difficulty: 'mittel', type: 'image', date: '19.04.2026', id: 3 },
+  { title: 'Versicherungsvertrag', difficulty: 'schwierig', type: 'document', date: '11.07.2025', id: 4 },
+  { title: 'Amazon', difficulty: 'leicht', type: 'image', date: '23.12.2024', id: 5 },
+  { title: 'Gehaltsabrechnung', difficulty: 'mittel', type: 'document', date: '05.02.2026', id: 6 },
+  { title: 'Führerschein', difficulty: 'mittel', type: 'image', date: '14.08.2025', id: 7 },
+  { title: 'Kreditvertrag', difficulty: 'schwierig', type: 'document', date: '29.11.2025', id: 8 },
+  { title: 'Facebook', difficulty: 'leicht', type: 'image', date: '17.06.2024', id: 9 },
+  { title: 'Arbeitsvertrag', difficulty: 'mittel', type: 'document', date: '03.10.2025', id: 10 },
+  { title: 'Reisepass', difficulty: 'mittel', type: 'image', date: '21.05.2026', id: 11 },
+  { title: 'Nebenkostenabrechnung', difficulty: 'schwierig', type: 'document', date: '09.01.2026', id: 12 },
+  { title: 'Telegram', difficulty: 'leicht', type: 'image', date: '13.02.2025', id: 13 },
+  { title: 'Kontoauszug', difficulty: 'mittel', type: 'document', date: '18.12.2025', id: 14 },
+  { title: 'Fahrzeugschein', difficulty: 'mittel', type: 'image', date: '07.04.2026', id: 15 },
+  { title: 'Mahnung', difficulty: 'schwierig', type: 'document', date: '25.08.2025', id: 16 },
+  { title: 'LinkedIn', difficulty: 'leicht', type: 'image', date: '30.07.2024', id: 17 },
+  { title: 'Darlehensvertrag', difficulty: 'schwierig', type: 'document', date: '12.03.2026', id: 18 },
+  { title: 'Sparkasse App', difficulty: 'leicht', type: 'image', date: '16.11.2025', id: 19 },
 ];
 
-const BADGE: Record<Difficulty, { text: string; bg: string }> = {
-  schwierig: { text: COLORS.badgeRed, bg: COLORS.badgeRedBg },
-  mittel: { text: COLORS.badgeAmber, bg: COLORS.badgeAmberBg },
-  leicht: { text: COLORS.badgeGreen, bg: COLORS.badgeGreenBg },
-};
-
-function HistoryCard({ item }: { item: typeof ITEMS[0] }) {
-  const badge = BADGE[item.difficulty];
-  return (
-    <View style={styles.card}>
-      <Text style={styles.cardName} numberOfLines={1}>{item.name}</Text>
-
-      <View style={[styles.badge, { backgroundColor: badge.bg }]}>
-        <Text style={[styles.badgeText, { color: badge.text }]}>{item.difficulty}</Text>
-      </View>
-
-      <View style={styles.cardFooter}>
-        {item.type === 'document' ? (
-          <Ionicons name="document-text-outline" size={20} color={COLORS.textMuted} />
-        ) : (
-          <Ionicons name="image-outline" size={20} color={COLORS.textMuted} />
-        )}
-        <Text style={styles.cardDate}>{item.date}</Text>
-      </View>
-    </View>
-  );
-}
-
 export default function HistoryPage() {
-  const insets = useSafeAreaInsets();
+  const [isGridLayout, setIsGridLayout] = useState<boolean>(true);
 
   return (
-    <View style={[styles.root, { paddingTop: insets.top + 8 }]}>
-      {/* Header */}
-      <View style={styles.header}>
-        <PageTitle>Verlauf</PageTitle>
-        <View style={styles.headerRight}>
-          <TouchableOpacity style={styles.editBtn} activeOpacity={0.7}>
-            <Text style={styles.editText}>Bearbeiten</Text>
-          </TouchableOpacity>
-          <TouchableOpacity activeOpacity={0.7}>
-            <Feather name="list" size={22} color={COLORS.textMuted} />
-          </TouchableOpacity>
-          <TouchableOpacity activeOpacity={0.7}>
-            <Ionicons name="grid-outline" size={22} color={COLORS.textMuted} />
-          </TouchableOpacity>
-        </View>
-      </View>
+    <View style={styles.mainView}>
+      <PageHeader>Verlauf</PageHeader>
 
-      <ScrollView contentContainerStyle={styles.grid} showsVerticalScrollIndicator={false}>
-        {/* Render in pairs for 2-col grid */}
-        {ITEMS.reduce<(typeof ITEMS[0])[][]>((rows, item, i) => {
-          if (i % 2 === 0) rows.push([item]);
-          else rows[rows.length - 1].push(item);
-          return rows;
-        }, []).map((row, i) => (
-          <View key={i} style={styles.gridRow}>
-            {row.map(item => <HistoryCard key={item.id} item={item} />)}
-            {row.length === 1 && <View style={{ flex: 1 }} />}
-          </View>
-        ))}
-      </ScrollView>
+      <View style={styles.historyArea}>
+        {/* Toggle buttons */}
+        <View style={styles.displayOptions}>
+          <Button
+            onPress={() => setIsGridLayout(false)}
+            style={[styles.toggleBtn, !isGridLayout && styles.toggleBtnActive]}
+          >
+            <Entypo name="list" size={22} color={COLORS.text} />
+          </Button>
+          <Button
+            onPress={() => setIsGridLayout(true)}
+            style={[styles.toggleBtn, isGridLayout && styles.toggleBtnActive]}
+          >
+            <Ionicons name="grid-outline" size={22} color={COLORS.text} />
+          </Button>
+        </View>
+
+        <ScrollView
+          style={styles.documentsList}
+          contentContainerStyle={isGridLayout ? styles.grid : styles.list}
+          showsVerticalScrollIndicator={false}
+        >
+          {isGridLayout
+            ? testData.map((entry) => (
+                <Link key={entry.id} href={``} asChild>
+                  <TouchableOpacity activeOpacity={0.7} style={styles.gridItem}>
+                    <HistoryEntryGrid
+                      title={entry.title}
+                      difficulty={entry.difficulty}
+                      type={entry.type}
+                      date={entry.date}
+                    />
+                  </TouchableOpacity>
+                </Link>
+              ))
+            : testData.map((entry) => (
+                <Link key={entry.id} href={``} asChild>
+                  <TouchableOpacity activeOpacity={0.7} style={styles.listItem}>
+                    <HistoryEntryList
+                      title={entry.title}
+                      difficulty={entry.difficulty}
+                      type={entry.type}
+                    />
+                  </TouchableOpacity>
+                </Link>
+              ))}
+        </ScrollView>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  root: {
+  mainView: {
     flex: 1,
     backgroundColor: COLORS.background,
+  },
+  historyArea: {
+    flex: 1,
     paddingHorizontal: SPACING.lg,
     paddingBottom: SPACING.sm,
   },
-  header: {
+  displayOptions: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: SPACING.lg,
+    justifyContent: 'flex-end',
+    gap: SPACING.xs,
+    marginBottom: SPACING.sm,
   },
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: SPACING.sm,
+  toggleBtn: {
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.sm,
   },
-  editBtn: {
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.pill,
-    paddingHorizontal: 14,
-    paddingVertical: 6,
+  toggleBtnActive: {
+    backgroundColor: COLORS.surfaceLight,
   },
-  editText: {
-    color: COLORS.text,
-    fontSize: 14,
-    fontWeight: '500',
+  documentsList: {
+    flex: 1,
   },
-
-  // Grid
   grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
     gap: SPACING.sm,
     paddingBottom: SPACING.md,
   },
-  gridRow: {
-    flexDirection: 'row',
+  gridItem: {
+    width: '48%',
+  },
+  list: {
     gap: SPACING.sm,
+    paddingBottom: SPACING.md,
   },
-
-  // Card
-  card: {
-    flex: 1,
-    backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.md,
-    gap: SPACING.sm,
-    minHeight: 130,
-    justifyContent: 'space-between',
-  },
-  cardName: {
-    color: COLORS.text,
-    fontSize: 17,
-    fontWeight: '700',
-  },
-  badge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: RADIUS.pill,
-  },
-  badgeText: {
-    fontSize: 13,
-    fontWeight: '600',
-  },
-  cardFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  cardDate: {
-    color: COLORS.textMuted,
-    fontSize: 13,
+  listItem: {
+    width: '100%',
   },
 });
