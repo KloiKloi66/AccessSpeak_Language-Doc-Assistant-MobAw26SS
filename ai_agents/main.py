@@ -56,3 +56,22 @@ def translate(request: TranslateRequest):
     except Exception as e:
         print("TRANSLATE ERROR:", str(e))
         return {"translation": "", "error": str(e)}
+
+
+# ── CrewAI Translation ────────────────────────────────────
+
+@app.post("/crew/translate")
+def crew_translate(request: TranslateRequest):
+    print(f"CREW TRANSLATE: '{request.text}' [{request.source_lang} → {request.target_lang}]")
+    try:
+        from ai_agents.crew.crew import run_translation
+        result = run_translation(
+            text=request.text,
+            source_lang=request.source_lang,
+            target_lang=request.target_lang,
+        )
+        print("CREW TRANSLATION:", result)
+        return {"translation": result}
+    except Exception as e:
+        print("CREW TRANSLATE ERROR:", str(e))
+        return {"translation": "", "error": str(e)}
