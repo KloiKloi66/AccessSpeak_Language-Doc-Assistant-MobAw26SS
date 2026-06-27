@@ -1,7 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from crewai import Crew
 
+from ai_agents.tasks import scan_task
+from ai_agents.ScanningAgent import document_agent
 from chatbot import ask_chatbot
 from translate import translate_text
 from simplify import simplify_text
@@ -23,6 +26,9 @@ class ChatRequest(BaseModel):
     message: str
 
 
+# -------------------------
+# CHAT 
+# -------------------------
 @app.post("/chat")
 def chat(request: ChatRequest):
     print("CHAT REQUEST:", request.message)
@@ -109,3 +115,37 @@ def crew_simplify(request: SimplifyRequest):
     except Exception as e:
         print("CREW SIMPLIFY ERROR:", str(e))
         return {"simplified": "", "error": str(e)}
+
+
+
+# -------------------------
+# CREW
+# -------------------------
+@app.post("/scan")
+def scan_document():
+
+    try:
+        crew = Crew(
+            agents=[document_agent],
+            tasks=[scan_task],
+            verbose=True
+        )
+
+        result = crew.kickoff(
+            inputs={"image_path": "ai_agents/test.png"}  # oder "data/test.png"
+        )
+
+        return {
+            "result": result
+        }
+
+    except Exception as e:
+
+        print("ERROR:", str(e))
+
+        return {
+            "error": str(e),
+            "message": "Fehler beim Dokument-Scan"
+        }
+    
+    #uvicorn ai_agents.main:app --reload  THEN http://127.0.0.1:8000/docs#/default/scan_document_scan_post
