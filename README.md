@@ -29,6 +29,7 @@ Potenzielle Features, die noch kommen könnten:
 #### Pre-requirements
 - Node
 - Python
+- uv
 - Docker (Desktop)
 
 #### Setup and running the project
