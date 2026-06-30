@@ -6,34 +6,15 @@ import HistoryEntryList from '../../components/history-entry-list.component';
 import HistoryEntryGrid from '../../components/history-entry-grid.component';
 import Button from '../../components/button.component';
 import { COLORS, RADIUS, SPACING } from '../../theme';
+import { useDocuments } from '../../utils/DataProvider';
+
 import Entypo from '@expo/vector-icons/Entypo';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-const testData = [
-  { title: 'Finanzamt', difficulty: 'mittel', type: 'document', date: '12.02.2026', id: 0 },
-  { title: 'Whatsapp', difficulty: 'leicht', type: 'image', date: '22.11.2024', id: 1 },
-  { title: 'Steuererklärung', difficulty: 'schwierig', type: 'document', date: '02.12.2025', id: 2 },
-  { title: 'Personalausweis', difficulty: 'mittel', type: 'image', date: '19.04.2026', id: 3 },
-  { title: 'Versicherungsvertrag', difficulty: 'schwierig', type: 'document', date: '11.07.2025', id: 4 },
-  { title: 'Amazon', difficulty: 'leicht', type: 'image', date: '23.12.2024', id: 5 },
-  { title: 'Gehaltsabrechnung', difficulty: 'mittel', type: 'document', date: '05.02.2026', id: 6 },
-  { title: 'Führerschein', difficulty: 'mittel', type: 'image', date: '14.08.2025', id: 7 },
-  { title: 'Kreditvertrag', difficulty: 'schwierig', type: 'document', date: '29.11.2025', id: 8 },
-  { title: 'Facebook', difficulty: 'leicht', type: 'image', date: '17.06.2024', id: 9 },
-  { title: 'Arbeitsvertrag', difficulty: 'mittel', type: 'document', date: '03.10.2025', id: 10 },
-  { title: 'Reisepass', difficulty: 'mittel', type: 'image', date: '21.05.2026', id: 11 },
-  { title: 'Nebenkostenabrechnung', difficulty: 'schwierig', type: 'document', date: '09.01.2026', id: 12 },
-  { title: 'Telegram', difficulty: 'leicht', type: 'image', date: '13.02.2025', id: 13 },
-  { title: 'Kontoauszug', difficulty: 'mittel', type: 'document', date: '18.12.2025', id: 14 },
-  { title: 'Fahrzeugschein', difficulty: 'mittel', type: 'image', date: '07.04.2026', id: 15 },
-  { title: 'Mahnung', difficulty: 'schwierig', type: 'document', date: '25.08.2025', id: 16 },
-  { title: 'LinkedIn', difficulty: 'leicht', type: 'image', date: '30.07.2024', id: 17 },
-  { title: 'Darlehensvertrag', difficulty: 'schwierig', type: 'document', date: '12.03.2026', id: 18 },
-  { title: 'Sparkasse App', difficulty: 'leicht', type: 'image', date: '16.11.2025', id: 19 },
-];
-
 export default function HistoryPage() {
   const [isGridLayout, setIsGridLayout] = useState<boolean>(true);
+
+  const { entries } = useDocuments();
 
   return (
     <View style={styles.mainView}>
@@ -62,7 +43,7 @@ export default function HistoryPage() {
           showsVerticalScrollIndicator={false}
         >
           {isGridLayout
-            ? testData.map((entry) => (
+            ? entries.map((entry) => (
                 <Link key={entry.id} href={``} asChild>
                   <TouchableOpacity activeOpacity={0.7} style={styles.gridItem}>
                     <HistoryEntryGrid
@@ -74,7 +55,7 @@ export default function HistoryPage() {
                   </TouchableOpacity>
                 </Link>
               ))
-            : testData.map((entry) => (
+            : entries.map((entry) => (
                 <Link key={entry.id} href={``} asChild>
                   <TouchableOpacity activeOpacity={0.7} style={styles.listItem}>
                     <HistoryEntryList

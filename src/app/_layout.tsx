@@ -3,6 +3,8 @@ import { useEffect } from 'react';
 import { AppState } from 'react-native';
 import * as NavigationBar from 'expo-navigation-bar';
 
+import { DataProvider } from '../utils/DataProvider';
+
 export default function RootLayout() {
   useEffect(() => {
     const removeNavBar = async () => {
@@ -22,27 +24,29 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-        contentStyle: { backgroundColor: '#1A1929' },
-      }}
-    >
-      <Stack.Screen name="(tabs)" />
-      <Stack.Screen
-        name="pages/instructionsPage"
-        options={{
-          animation: 'slide_from_bottom',
+    <DataProvider>
+      <Stack
+        screenOptions={{
           headerShown: false,
+          contentStyle: { backgroundColor: '#1A1929' },
         }}
-      />
-      <Stack.Screen
-        name="pages/translationPage"
-        options={{
-          animation: 'slide_from_bottom',
-          headerShown: false,
-        }}
-      />
-    </Stack>
+      >
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen
+          name="pages/instructionsPage"
+          options={{
+            animation: 'slide_from_bottom',
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="pages/translationPage"
+          options={{
+            animation: 'slide_from_bottom',
+            headerShown: false,
+          }}
+        />
+      </Stack>
+    </DataProvider>
   );
 }

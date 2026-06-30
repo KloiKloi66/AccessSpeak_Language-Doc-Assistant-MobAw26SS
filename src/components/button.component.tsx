@@ -1,12 +1,12 @@
 import React, { ReactNode } from 'react';
-import { StyleSheet, TextStyle, TouchableOpacity } from 'react-native';
+import { StyleSheet, StyleProp, TouchableOpacity, ViewStyle } from 'react-native';
 import { COLORS, RADIUS } from '../theme';
 
 type Properties = {
   children: ReactNode;
   shape?: 'circle' | 'square';
   size?: 'small' | 'medium' | 'large';
-  style?: TextStyle;
+  style?: StyleProp<ViewStyle>;
   onPress?: () => void;
 };
 
