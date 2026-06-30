@@ -15,7 +15,12 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Constants from 'expo-constants';
 import { COLORS, RADIUS, SPACING } from '../../theme';
+
+// Automatically uses the same IP as the Expo dev server — no manual changes needed
+const devHost = Constants.expoConfig?.hostUri?.split(':')[0] ?? 'localhost';
+const BACKEND_URL = `http://${devHost}:8000`;
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -44,7 +49,7 @@ export default function TranslationPage() {
 
     debounceRef.current = setTimeout(async () => {
       try {
-        const response = await fetch('http://192.168.0.234:8000/translate', {
+        const response = await fetch(`${BACKEND_URL}/translate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
