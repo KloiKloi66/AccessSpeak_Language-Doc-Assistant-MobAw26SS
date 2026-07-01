@@ -50,10 +50,12 @@ export default function HomePage() {
             title="Kamera"
             icon={<Ionicons name="camera-outline" size={52} color={COLORS.text} />}
           />
-          <FunctionsCard
-            title="Lesen"
-            icon={<Ionicons name="volume-medium-outline" size={52} color={COLORS.text} />}
-          />
+          <Link href={{ pathname: '/(tabs)/chatBotPage' }} asChild>
+            <FunctionsCard
+              title="Chatbot"
+              icon={<MaterialCommunityIcons name="robot-outline" size={52} color={COLORS.text} />}
+            />
+          </Link>
         </View>
         <View style={styles.cardRow}>
           <Link href={{ pathname: '/pages/translationPage' }} asChild>

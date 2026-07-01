@@ -25,8 +25,8 @@ export const useDocuments = () => {
 };
 
 // swap api_url according to your usage
-const API_URL = "http://10.0.2.2:8000"; // Android Emulator
-//const API_URL = "http://localhost:8000"; // iOS Simulator
+// const API_URL = "http://10.0.2.2:8000"; // Android Emulator
+const API_URL = "http://localhost:8000"; // iOS Simulator
 //const API_URL = "http://<< your-ip >>:8000"; // run on phone in same network 
 
 export function DataProvider({children}: {children: React.ReactNode}) {

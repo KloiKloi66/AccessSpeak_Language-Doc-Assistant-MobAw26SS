@@ -20,7 +20,8 @@ import { COLORS, RADIUS, SPACING } from '../../theme';
 
 // Automatically uses the same IP as the Expo dev server — no manual changes needed
 const devHost = Constants.expoConfig?.hostUri?.split(':')[0] ?? 'localhost';
-const BACKEND_URL = `http://${devHost}:8001`; // for use with physical device on same network
+// const BACKEND_URL = `http://${devHost}:8001`; // for use with physical device on same network
+const BACKEND_URL = `http://127.0.0.1:8001`;
 // const BACKEND_URL = `http://10.0.2.2:8001`; // for android emulator
 
 import Ionicons from '@expo/vector-icons/Ionicons';
