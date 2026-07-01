@@ -8,11 +8,7 @@ import { COLORS, RADIUS, SPACING } from '../../theme';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-
-const RECENT_ITEMS = [
-  { id: '1', name: 'Finanzamt.pdf', difficulty: 'schwierig', type: 'document' },
-  { id: '2', name: 'Urlaub.jpg', difficulty: 'mittel', type: 'image' },
-];
+import { useDocuments } from '../../utils/DataProvider';
 
 const BADGE_COLORS: Record<string, { text: string; bg: string }> = {
   schwierig: { text: COLORS.badgeRed, bg: COLORS.badgeRedBg },
@@ -21,6 +17,7 @@ const BADGE_COLORS: Record<string, { text: string; bg: string }> = {
 };
 
 export default function HomePage() {
+  const { entries } = useDocuments();
   const insets = useSafeAreaInsets();
 
   return (
@@ -83,12 +80,15 @@ export default function HomePage() {
           </Link>
         </View>
 
-        {RECENT_ITEMS.map((item) => {
+        {[...entries]
+          .sort((a, b) => b.id - a.id)
+          .slice(0, 3)
+          .map((item) => {
           const badge = BADGE_COLORS[item.difficulty] ?? BADGE_COLORS.mittel;
           return (
             <View key={item.id} style={styles.recentItem}>
               <Text style={styles.recentName} numberOfLines={1}>
-                {item.name}
+                {item.title}
               </Text>
               <View style={[styles.badge, { backgroundColor: badge.bg }]}>
                 <Text style={[styles.badgeText, { color: badge.text }]}>
