@@ -5,12 +5,13 @@ type Entry = {
   difficulty: string;
   type: string;
   date: string;
+  uri: string;
   id: number;
 };
 
 type DataContextType = {
   entries: Entry[];
-  addEntry: (title: string, difficulty: string, type: string, date: string) => Promise<void>;
+  addEntry: (title: string, difficulty: string, type: string, date: string, uri: string) => Promise<void>;
   removeEntryById: (id: string) => Promise<void>;
   getEntryById: (id: string) => Entry | undefined;
 };
