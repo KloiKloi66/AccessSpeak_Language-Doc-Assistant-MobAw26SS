@@ -1,19 +1,17 @@
+import os
 import requests
 
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/api/generate")
+MODEL = os.getenv("OLLAMA_MODEL", "llama3.2")
 
 def ask_chatbot(message: str) -> str:
-    url = "http://localhost:11434/api/generate"
-
     payload = {
-        "model": "llama3",
+        "model": MODEL,
         "prompt": message,
         "stream": False
     }
 
-    response = requests.post(url, json=payload)
-
+    response = requests.post(OLLAMA_URL, json=payload)
     response.raise_for_status()
-
     data = response.json()
-
-    return data["response"]
+    return data.get("response", "[CHATBOT] No ollama response.")

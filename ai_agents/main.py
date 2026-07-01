@@ -2,8 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from ai_agents.chatbot import ask_chatbot
-from ai_agents.translate import translate_text
+from chatbot import ask_chatbot
+from translate import translate_text
 
 app = FastAPI()
 

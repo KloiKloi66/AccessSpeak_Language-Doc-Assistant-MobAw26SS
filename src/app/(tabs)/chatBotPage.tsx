@@ -9,11 +9,16 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import Constants from 'expo-constants';
 
 import PageHeader from '../../components/page-header.component';
 import { COLORS, RADIUS, SPACING } from '../../theme';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
+
+const devHost = Constants.expoConfig?.hostUri?.split(':')[0] ?? 'localhost';
+const BACKEND_URL = `http://${devHost}:8001`; // for use with physical device on same network
+// const BACKEND_URL = `http://10.0.2.2:8001`; // for android emulator
 
 export default function ChatBotPage() {
   const [message, setMessage] = useState('');
@@ -33,7 +38,7 @@ export default function ChatBotPage() {
     setMessage('');
 
     try {
-      const response = await fetch('http://10.181.218.37:8000/chat', {
+      const response = await fetch(`${BACKEND_URL}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: currentMessage }),
