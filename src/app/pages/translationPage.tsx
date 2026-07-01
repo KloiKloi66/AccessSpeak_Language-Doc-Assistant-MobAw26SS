@@ -20,6 +20,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Constants from 'expo-constants';
 import { COLORS, RADIUS, SPACING } from '../../theme';
 
+import * as Speech from 'expo-speech';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Feather from '@expo/vector-icons/Feather';
@@ -29,6 +30,15 @@ const devHost = Constants.expoConfig?.hostUri?.split(':')[0] ?? 'localhost';
 const BACKEND_URL = `http://127.0.0.1:8001`;
 
 type Language = { name: string; flag: any };
+
+const LANG_CODE: Record<string, string> = {
+  Deutsch:     'de',
+  Englisch:    'en',
+  Französisch: 'fr',
+  Italienisch: 'it',
+  Spanisch:    'es',
+  Türkisch:    'tr',
+};
 
 const LANGUAGES: Language[] = [
   { name: 'Deutsch',      flag: require('../../../assets/temp/deutsch.png') },
@@ -120,10 +130,19 @@ export default function TranslationPage() {
             <Ionicons name="chevron-down" size={16} color={COLORS.textMuted} />
           </TouchableOpacity>
           <View style={styles.cardIcons}>
-            <TouchableOpacity activeOpacity={0.7}>
-              <Feather name="mic" size={20} color={COLORS.textMuted} />
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={async () => {
+                const text = await Clipboard.getString();
+                if (text) setInputText(text);
+              }}
+            >
+              <Ionicons name="clipboard-outline" size={20} color={COLORS.textMuted} />
             </TouchableOpacity>
-            <TouchableOpacity activeOpacity={0.7}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => inputText && Speech.speak(inputText, { language: LANG_CODE[sourceLang.name] })}
+            >
               <Ionicons name="volume-medium-outline" size={20} color={COLORS.textMuted} />
             </TouchableOpacity>
           </View>
@@ -166,7 +185,10 @@ export default function TranslationPage() {
             >
               <Ionicons name="copy-outline" size={20} color={COLORS.textMuted} />
             </TouchableOpacity>
-            <TouchableOpacity activeOpacity={0.7}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => outputText && Speech.speak(outputText, { language: LANG_CODE[targetLang.name] })}
+            >
               <Ionicons name="volume-medium-outline" size={20} color={COLORS.textMuted} />
             </TouchableOpacity>
           </View>
