@@ -1,9 +1,8 @@
+import os
 import requests
 
-
-OLLAMA_URL = "http://localhost:11434/api/generate"
-MODEL = "llama3.2"
-
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/api/generate")
+MODEL = os.getenv("OLLAMA_MODEL", "llama3.2")
 
 def translate_text(text: str, source_lang: str, target_lang: str) -> str:
     """
