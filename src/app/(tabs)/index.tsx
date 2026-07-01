@@ -1,5 +1,5 @@
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import FunctionsCard from '../../components/functions-card.component';
@@ -49,6 +49,7 @@ export default function HomePage() {
           <FunctionsCard
             title="Kamera"
             icon={<Ionicons name="camera-outline" size={52} color={COLORS.text} />}
+            onPress={() => router.push('/(tabs)/cameraPage')}
           />
           <FunctionsCard
             title="Lesen"
