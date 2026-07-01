@@ -12,36 +12,40 @@ import {
   Keyboard,
   Platform,
   Clipboard,
+  Modal,
+  FlatList,
 } from 'react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Constants from 'expo-constants';
 import { COLORS, RADIUS, SPACING } from '../../theme';
 
-// Automatically uses the same IP as the Expo dev server — no manual changes needed
-const devHost = Constants.expoConfig?.hostUri?.split(':')[0] ?? 'localhost';
-// const BACKEND_URL = `http://${devHost}:8001`; // for use with physical device on same network
-const BACKEND_URL = `http://127.0.0.1:8001`;
-// const BACKEND_URL = `http://10.0.2.2:8001`; // for android emulator
-
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Feather from '@expo/vector-icons/Feather';
 import Entypo from '@expo/vector-icons/Entypo';
 
+const devHost = Constants.expoConfig?.hostUri?.split(':')[0] ?? 'localhost';
+const BACKEND_URL = `http://127.0.0.1:8001`;
+
 type Language = { name: string; flag: any };
 
 const LANGUAGES: Language[] = [
-  { name: 'Englisch', flag: require('../../../assets/temp/uk.jpg') },
-  { name: 'Deutsch',  flag: require('../../../assets/temp/deutschland.png') },
+  { name: 'Deutsch',      flag: require('../../../assets/temp/deutsch.png') },
+  { name: 'Englisch',     flag: require('../../../assets/temp/englisch.png') },
+  { name: 'Französisch',  flag: require('../../../assets/temp/franzoesisch.png') },
+  { name: 'Italienisch',  flag: require('../../../assets/temp/italienisch.png') },
+  { name: 'Spanisch',     flag: require('../../../assets/temp/spanisch.png') },
+  { name: 'Türkisch',     flag: require('../../../assets/temp/tuerkisch.png') },
 ];
 
 export default function TranslationPage() {
   const insets = useSafeAreaInsets();
-  const [sourceLang, setSourceLang] = useState<Language>(LANGUAGES[0]);
-  const [targetLang, setTargetLang] = useState<Language>(LANGUAGES[1]);
+  const [sourceLang, setSourceLang] = useState<Language>(LANGUAGES[1]); // Englisch
+  const [targetLang, setTargetLang] = useState<Language>(LANGUAGES[0]); // Deutsch
   const [inputText,  setInputText]  = useState('');
   const [outputText, setOutputText] = useState('');
+  const [dropdown, setDropdown] = useState<'source' | 'target' | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Auto-translate with debounce
@@ -78,6 +82,12 @@ export default function TranslationPage() {
     setOutputText(inputText);
   }
 
+  function selectLanguage(lang: Language) {
+    if (dropdown === 'source') setSourceLang(lang);
+    else setTargetLang(lang);
+    setDropdown(null);
+  }
+
   return (
     <KeyboardAvoidingView
       style={[styles.root, { paddingTop: insets.top + 8 }]}
@@ -91,7 +101,6 @@ export default function TranslationPage() {
         <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} activeOpacity={0.7}>
           <Entypo name="chevron-thin-left" size={22} color={COLORS.text} />
         </TouchableOpacity>
-        {/* Title absolutely centered, doesn't affect flex siblings */}
         <View style={styles.headerTitleRow} pointerEvents="none">
           <Text style={styles.headerTitle}>Übersetzen</Text>
           <MaterialCommunityIcons name="translate" size={28} color={COLORS.text} />
@@ -100,9 +109,12 @@ export default function TranslationPage() {
 
       {/* ── Source card ── */}
       <View style={styles.card}>
-        {/* Language pill */}
         <View style={styles.cardTopRow}>
-          <TouchableOpacity style={styles.langPill} activeOpacity={0.7}>
+          <TouchableOpacity
+            style={styles.langPill}
+            activeOpacity={0.7}
+            onPress={() => setDropdown('source')}
+          >
             <Image source={sourceLang.flag} style={styles.flagSmall} />
             <Text style={styles.langName}>{sourceLang.name}</Text>
             <Ionicons name="chevron-down" size={16} color={COLORS.textMuted} />
@@ -128,7 +140,7 @@ export default function TranslationPage() {
         />
       </View>
 
-      {/* ── Swap button (overlaps both cards) ── */}
+      {/* ── Swap button ── */}
       <View style={styles.swapRow}>
         <TouchableOpacity style={styles.swapBtn} onPress={swap} activeOpacity={0.8}>
           <MaterialCommunityIcons name="swap-vertical" size={28} color={COLORS.text} />
@@ -137,9 +149,12 @@ export default function TranslationPage() {
 
       {/* ── Target card ── */}
       <View style={styles.card}>
-        {/* Language pill */}
         <View style={styles.cardTopRow}>
-          <TouchableOpacity style={styles.langPill} activeOpacity={0.7}>
+          <TouchableOpacity
+            style={styles.langPill}
+            activeOpacity={0.7}
+            onPress={() => setDropdown('target')}
+          >
             <Image source={targetLang.flag} style={styles.flagSmall} />
             <Text style={styles.langName}>{targetLang.name}</Text>
             <Ionicons name="chevron-down" size={16} color={COLORS.textMuted} />
@@ -173,11 +188,9 @@ export default function TranslationPage() {
         <TouchableOpacity style={styles.actionBtn} activeOpacity={0.7}>
           <Ionicons name="cloud-upload-outline" size={30} color={COLORS.text} />
         </TouchableOpacity>
-
         <TouchableOpacity style={[styles.actionBtn, styles.actionBtnPrimary]} activeOpacity={0.7}>
           <Feather name="mic" size={32} color={COLORS.text} />
         </TouchableOpacity>
-
         <TouchableOpacity style={styles.actionBtn} activeOpacity={0.7}>
           <Ionicons name="camera-outline" size={30} color={COLORS.text} />
         </TouchableOpacity>
@@ -185,6 +198,50 @@ export default function TranslationPage() {
 
       </View>
       </TouchableWithoutFeedback>
+
+      {/* ── Language dropdown modal ── */}
+      <Modal
+        visible={dropdown !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setDropdown(null)}
+      >
+        <TouchableWithoutFeedback onPress={() => setDropdown(null)}>
+          <View style={styles.modalOverlay}>
+            <TouchableWithoutFeedback>
+              <View style={styles.modalSheet}>
+                <Text style={styles.modalTitle}>Sprache wählen</Text>
+                <FlatList
+                  data={LANGUAGES}
+                  keyExtractor={(item) => item.name}
+                  renderItem={({ item }) => {
+                    const isSelected =
+                      dropdown === 'source'
+                        ? item.name === sourceLang.name
+                        : item.name === targetLang.name;
+                    return (
+                      <TouchableOpacity
+                        style={[styles.modalItem, isSelected && styles.modalItemActive]}
+                        onPress={() => selectLanguage(item)}
+                        activeOpacity={0.7}
+                      >
+                        <Image source={item.flag} style={styles.flagModal} />
+                        <Text style={[styles.modalItemText, isSelected && { color: COLORS.accent }]}>
+                          {item.name}
+                        </Text>
+                        {isSelected && (
+                          <Ionicons name="checkmark" size={20} color={COLORS.accent} />
+                        )}
+                      </TouchableOpacity>
+                    );
+                  }}
+                />
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+
     </KeyboardAvoidingView>
   );
 }
@@ -232,7 +289,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 
-  // Cards – equal flex so both same height
+  // Cards
   card: {
     flex: 1,
     backgroundColor: COLORS.surface,
@@ -316,5 +373,48 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     backgroundColor: COLORS.accent,
+  },
+
+  // Modal dropdown
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalSheet: {
+    backgroundColor: COLORS.surface,
+    borderTopLeftRadius: RADIUS.xl,
+    borderTopRightRadius: RADIUS.xl,
+    paddingHorizontal: SPACING.lg,
+    paddingTop: SPACING.lg,
+    paddingBottom: 40,
+  },
+  modalTitle: {
+    color: COLORS.text,
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: SPACING.md,
+  },
+  modalItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.md,
+    paddingVertical: SPACING.sm,
+    borderRadius: RADIUS.md,
+    paddingHorizontal: SPACING.sm,
+  },
+  modalItemActive: {
+    backgroundColor: COLORS.surfaceLight,
+  },
+  flagModal: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+  },
+  modalItemText: {
+    flex: 1,
+    color: COLORS.text,
+    fontSize: 16,
+    fontWeight: '500',
   },
 });
