@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -18,6 +18,7 @@ import Constants from 'expo-constants';
 import { COLORS, RADIUS, SPACING } from '../../../theme';
 import { useDocuments } from '../../../utils/DataProvider';
 
+import * as Speech from 'expo-speech';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Entypo from '@expo/vector-icons/Entypo';
@@ -26,6 +27,14 @@ const devHost = Constants.expoConfig?.hostUri?.split(':')[0] ?? 'localhost';
 const AI_URL = `http://${devHost}:8001`;
 
 type Language = { name: string; flag: any };
+
+const LANG_CODE: Record<string, string> = {
+  Englisch:    'en',
+  Französisch: 'fr',
+  Italienisch: 'it',
+  Spanisch:    'es',
+  Türkisch:    'tr',
+};
 
 // Target languages for translation (documents are German, so no Deutsch here)
 const LANGUAGES: Language[] = [
@@ -55,9 +64,50 @@ export default function DocumentPage() {
   const [targetLang, setTargetLang] = useState<Language | null>(null);
   const [langModalOpen, setLangModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   const entry = getEntryById(id ?? '');
   const badge = BADGE_COLORS[entry?.difficulty ?? ''] ?? BADGE_COLORS.mittel;
+
+  // The text currently visible in the text card
+  const visibleText =
+    viewMode === 'original'
+      ? entry?.originalText ?? ''
+      : viewMode === 'einfach'
+        ? entry?.simplifiedText ?? ''
+        : (targetLang && entry?.translations[targetLang.name]) || '';
+
+  // Übersetzt view is read in the target language, everything else in German
+  const speechLang =
+    viewMode === 'uebersetzt' && targetLang ? LANG_CODE[targetLang.name] ?? 'de' : 'de';
+
+  function stopSpeech() {
+    Speech.stop();
+    setIsSpeaking(false);
+  }
+
+  function toggleSpeech() {
+    if (isSpeaking) {
+      stopSpeech();
+      return;
+    }
+    if (!visibleText) return;
+    setIsSpeaking(true);
+    Speech.speak(visibleText, {
+      language: speechLang,
+      onDone: () => setIsSpeaking(false),
+      onStopped: () => setIsSpeaking(false),
+      onError: () => setIsSpeaking(false),
+    });
+  }
+
+  // Stop reading when the view/language changes (text no longer matches audio)
+  useEffect(() => {
+    stopSpeech();
+  }, [viewMode, targetLang]);
+
+  // Stop reading when leaving the page
+  useEffect(() => stopSpeech, []);
 
   async function showSimplified() {
     setViewMode('einfach');
@@ -161,6 +211,20 @@ export default function DocumentPage() {
               />
               <Text style={styles.metaText}>{entry.date}</Text>
             </View>
+
+            {/* Vorlesen */}
+            <TouchableOpacity
+              style={[styles.speakBtn, isSpeaking && styles.speakBtnActive]}
+              onPress={toggleSpeech}
+              disabled={!visibleText}
+              activeOpacity={0.7}
+            >
+              <Ionicons
+                name={isSpeaking ? 'stop' : 'volume-medium-outline'}
+                size={22}
+                color={COLORS.text}
+              />
+            </TouchableOpacity>
           </View>
 
           {/* ── Original/Einfach toggle ── */}
@@ -368,6 +432,18 @@ const styles = StyleSheet.create({
   metaText: {
     color: COLORS.textMuted,
     fontSize: 14,
+  },
+  speakBtn: {
+    marginLeft: 'auto',
+    width: 42,
+    height: 42,
+    borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  speakBtnActive: {
+    backgroundColor: COLORS.accent,
   },
 
   // View toggle
