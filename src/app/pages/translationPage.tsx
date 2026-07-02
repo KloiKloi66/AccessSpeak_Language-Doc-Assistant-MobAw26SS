@@ -25,8 +25,11 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Entypo from '@expo/vector-icons/Entypo';
 
+// Automatically uses the same IP as the Expo dev server — no manual changes needed
 const devHost = Constants.expoConfig?.hostUri?.split(':')[0] ?? 'localhost';
+// const BACKEND_URL = `http://${devHost}:8001`; // for use with physical device on same network
 const BACKEND_URL = `http://127.0.0.1:8001`;
+// const BACKEND_URL = `http://10.0.2.2:8001`; // for android emulator
 
 type Language = { name: string; flag: any };
 
