@@ -60,8 +60,13 @@ export default function HomePage() {
         <View style={styles.cardRow}>
           <Link href={{ pathname: '/pages/translationPage' }} asChild>
             <FunctionsCard
-              title="Übersetzen"
-              icon={<MaterialCommunityIcons name="translate" size={52} color={COLORS.text} />}
+              title="Verstehen"
+              icon={
+                <View style={styles.comboIcons}>
+                  <MaterialCommunityIcons name="translate" size={44} color={COLORS.text} />
+                  <Ionicons name="sparkles-outline" size={44} color={COLORS.text} />
+                </View>
+              }
             />
           </Link>
           <FunctionsCard
@@ -179,6 +184,13 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     gap: 10,
+  },
+
+  // Combined icons (Verstehen card)
+  comboIcons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.sm,
   },
 
   // Recent
