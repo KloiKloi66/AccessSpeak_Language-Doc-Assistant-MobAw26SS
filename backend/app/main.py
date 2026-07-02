@@ -22,7 +22,8 @@ def get_entries():
           "title": entry["title"],
           "difficulty": entry["difficulty"],
           "type": entry["type"],
-          "date": entry["date"]
+          "date": entry["date"],
+          "originalText": entry.get("originalText", "")
       })
 
   return entries
@@ -41,10 +42,12 @@ def create_entry(entry: dict):
       "title": entry["title"],
       "difficulty": entry["difficulty"],
       "type": entry["type"],
-      "date": entry["date"]
+      "date": entry["date"],
+      "originalText": entry.get("originalText", "")
   }
   documents.insert_one(document)
 
+  document.pop("_id", None)
   return document
 
 
