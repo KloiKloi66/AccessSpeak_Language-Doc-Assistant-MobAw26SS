@@ -5,13 +5,13 @@ type Entry = {
   difficulty: string;
   type: string;
   date: string;
-  uri: string;
+  originalText: string;
   id: number;
 };
 
 type DataContextType = {
   entries: Entry[];
-  addEntry: (title: string, difficulty: string, type: string, date: string, uri: string) => Promise<void>;
+  addEntry: (title: string, difficulty: string, type: string, date: string, originalText: string) => Promise<void>;
   removeEntryById: (id: string) => Promise<void>;
   getEntryById: (id: string) => Entry | undefined;
 };
@@ -51,7 +51,7 @@ export function DataProvider({children}: {children: React.ReactNode}) {
 
   useEffect(() => {fetchEntries();}, []);
 
-  const addEntry = async (title: string, difficulty: string, type: string, date: string) => {
+  const addEntry = async (title: string, difficulty: string, type: string, date: string, originalText: string) => {
     try {
       const response = await fetch(`${API_URL}/entries`, {
         method: "POST",
@@ -63,6 +63,7 @@ export function DataProvider({children}: {children: React.ReactNode}) {
           difficulty,
           type,
           date,
+          originalText,
         }),
       });
 
