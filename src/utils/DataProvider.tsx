@@ -6,6 +6,8 @@ type Entry = {
   type: string;
   date: string;
   originalText: string;
+  simplifiedText: string;
+  translations: Record<string, string>;
   id: number;
 };
 
@@ -14,6 +16,8 @@ type DataContextType = {
   addEntry: (title: string, difficulty: string, type: string, date: string, originalText: string) => Promise<void>;
   removeEntryById: (id: string) => Promise<void>;
   getEntryById: (id: string) => Entry | undefined;
+  cacheSimplifiedText: (id: number, text: string) => Promise<void>;
+  cacheTranslation: (id: number, language: string, text: string) => Promise<void>;
 };
 
 const DataContext = createContext<DataContextType | null>(null);
@@ -93,6 +97,43 @@ export function DataProvider({children}: {children: React.ReactNode}) {
     return entries.find((entry) => entry.id.toString() === id);
   };
 
+  // Persist a generated result on the backend, then mirror it in local state.
+  // Local state is updated even if the PATCH fails, so the user still sees
+  // the result — it just won't survive an app restart.
+  const patchEntry = async (id: number, body: object, localUpdate: (entry: Entry) => Entry) => {
+    try {
+      await fetch(`${API_URL}/entries/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+    } catch (error) {
+      console.error("Failed to patch entry:", error);
+    }
+
+    setEntries((prev) =>
+      prev.map((entry) => (entry.id === id ? localUpdate(entry) : entry))
+    );
+  };
+
+  const cacheSimplifiedText = async (id: number, text: string) => {
+    await patchEntry(
+      id,
+      { simplifiedText: text },
+      (entry) => ({ ...entry, simplifiedText: text })
+    );
+  };
+
+  const cacheTranslation = async (id: number, language: string, text: string) => {
+    await patchEntry(
+      id,
+      { translations: { [language]: text } },
+      (entry) => ({ ...entry, translations: { ...entry.translations, [language]: text } })
+    );
+  };
+
   return (
     <DataContext.Provider
       value={{
@@ -100,6 +141,8 @@ export function DataProvider({children}: {children: React.ReactNode}) {
         addEntry,
         removeEntryById,
         getEntryById,
+        cacheSimplifiedText,
+        cacheTranslation,
       }}
     >
       {children}

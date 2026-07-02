@@ -31,10 +31,10 @@ type ViewMode = 'original' | 'einfach';
 export default function DocumentPage() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { getEntryById } = useDocuments();
+  const { getEntryById, cacheSimplifiedText } = useDocuments();
 
   const [viewMode, setViewMode] = useState<ViewMode>('original');
-  const [simplifiedText, setSimplifiedText] = useState<string | null>(null);
+  const [simplifyError, setSimplifyError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const entry = getEntryById(id ?? '');
@@ -42,9 +42,11 @@ export default function DocumentPage() {
 
   async function showSimplified() {
     setViewMode('einfach');
-    if (simplifiedText !== null || !entry?.originalText || loading) return;
+    // Cache hit (from DB or earlier this session): nothing to do
+    if (!entry || entry.simplifiedText || !entry.originalText || loading) return;
 
     setLoading(true);
+    setSimplifyError(null);
     try {
       const response = await fetch(`${AI_URL}/simplify`, {
         method: 'POST',
@@ -52,10 +54,15 @@ export default function DocumentPage() {
         body: JSON.stringify({ text: entry.originalText }),
       });
       const data = await response.json();
-      setSimplifiedText(data.simplified || 'Vereinfachung fehlgeschlagen.');
+      if (data.simplified) {
+        // Persist in MongoDB + update local state (no re-generation next time)
+        await cacheSimplifiedText(entry.id, data.simplified);
+      } else {
+        setSimplifyError('Vereinfachung fehlgeschlagen. Tippe erneut auf „Einfach".');
+      }
     } catch (e) {
       console.log('Simplify error:', e);
-      setSimplifiedText('Vereinfachung fehlgeschlagen.');
+      setSimplifyError('Vereinfachung fehlgeschlagen. Tippe erneut auf „Einfach".');
     } finally {
       setLoading(false);
     }
@@ -140,8 +147,10 @@ export default function DocumentPage() {
                       Für dieses Dokument ist kein Text gespeichert.
                     </Text>
                   )
+                ) : entry.simplifiedText ? (
+                  <Text style={styles.documentText}>{entry.simplifiedText}</Text>
                 ) : (
-                  <Text style={styles.documentText}>{simplifiedText ?? ''}</Text>
+                  <Text style={styles.placeholderText}>{simplifyError ?? ''}</Text>
                 )}
               </ScrollView>
             )}
