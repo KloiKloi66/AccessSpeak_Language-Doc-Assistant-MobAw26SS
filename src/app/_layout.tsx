@@ -46,6 +46,13 @@ export default function RootLayout() {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="pages/documentPage/[id]"
+          options={{
+            animation: 'slide_from_right',
+            headerShown: false,
+          }}
+        />
       </Stack>
     </DataProvider>
   );

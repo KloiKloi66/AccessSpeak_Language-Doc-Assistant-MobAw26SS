@@ -44,7 +44,7 @@ export default function HistoryPage() {
         >
           {isGridLayout
             ? entries.map((entry) => (
-                <Link key={entry.id} href={``} asChild>
+                <Link key={entry.id} href={`/pages/documentPage/${entry.id}`} asChild>
                   <TouchableOpacity activeOpacity={0.7} style={styles.gridItem}>
                     <HistoryEntryGrid
                       title={entry.title}
@@ -56,7 +56,7 @@ export default function HistoryPage() {
                 </Link>
               ))
             : entries.map((entry) => (
-                <Link key={entry.id} href={``} asChild>
+                <Link key={entry.id} href={`/pages/documentPage/${entry.id}`} asChild>
                   <TouchableOpacity activeOpacity={0.7} style={styles.listItem}>
                     <HistoryEntryList
                       title={entry.title}
