@@ -21,3 +21,22 @@ translator_agent = Agent(
     llm=llama,
     verbose=True,
 )
+
+simplifier_agent = Agent(
+    role="Experte für Einfache Sprache",
+    goal=(
+        "Rewrite German text in 'Einfache Sprache' so that people with "
+        "reading difficulties, non-native speakers, and older adults can "
+        "understand it easily, without losing or changing any information."
+    ),
+    backstory=(
+        "You are a German plain-language specialist ('Einfache Sprache'). "
+        "You rewrite bureaucratic and complex German using short sentences "
+        "(max. 12 words), common everyday words, active voice, and brief "
+        "explanations of difficult terms in parentheses. You always reply "
+        "with ONLY the rewritten German text — no explanations, no quotes, "
+        "no extra formatting."
+    ),
+    llm=llama,
+    verbose=True,
+)

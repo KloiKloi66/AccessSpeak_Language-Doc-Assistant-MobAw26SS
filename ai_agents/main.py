@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 from chatbot import ask_chatbot
 from translate import translate_text
+from simplify import simplify_text
 
 app = FastAPI()
 
@@ -58,6 +59,24 @@ def translate(request: TranslateRequest):
         return {"translation": "", "error": str(e)}
 
 
+# ── Simplification (Einfache Sprache, German only) ───────
+
+class SimplifyRequest(BaseModel):
+    text: str
+
+
+@app.post("/simplify")
+def simplify(request: SimplifyRequest):
+    print(f"SIMPLIFY: '{request.text}'")
+    try:
+        result = simplify_text(text=request.text)
+        print("SIMPLIFIED:", result)
+        return {"simplified": result}
+    except Exception as e:
+        print("SIMPLIFY ERROR:", str(e))
+        return {"simplified": "", "error": str(e)}
+
+
 # ── CrewAI Translation ────────────────────────────────────
 
 @app.post("/crew/translate")
@@ -75,3 +94,18 @@ def crew_translate(request: TranslateRequest):
     except Exception as e:
         print("CREW TRANSLATE ERROR:", str(e))
         return {"translation": "", "error": str(e)}
+
+
+# ── CrewAI Simplification ─────────────────────────────────
+
+@app.post("/crew/simplify")
+def crew_simplify(request: SimplifyRequest):
+    print(f"CREW SIMPLIFY: '{request.text}'")
+    try:
+        from ai_agents.crew.crew import run_simplification
+        result = run_simplification(text=request.text)
+        print("CREW SIMPLIFIED:", result)
+        return {"simplified": result}
+    except Exception as e:
+        print("CREW SIMPLIFY ERROR:", str(e))
+        return {"simplified": "", "error": str(e)}
