@@ -23,7 +23,6 @@ import { COLORS, RADIUS, SPACING } from '../../theme';
 import * as Speech from 'expo-speech';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import Feather from '@expo/vector-icons/Feather';
 import Entypo from '@expo/vector-icons/Entypo';
 
 const devHost = Constants.expoConfig?.hostUri?.split(':')[0] ?? 'localhost';
@@ -49,8 +48,11 @@ const LANGUAGES: Language[] = [
   { name: 'Türkisch',     flag: require('../../../assets/temp/tuerkisch.png') },
 ];
 
+type Mode = 'translate' | 'simplify';
+
 export default function TranslationPage() {
   const insets = useSafeAreaInsets();
+  const [mode, setMode] = useState<Mode>('translate');
   const [sourceLang, setSourceLang] = useState<Language>(LANGUAGES[1]); // Englisch
   const [targetLang, setTargetLang] = useState<Language>(LANGUAGES[0]); // Deutsch
   const [inputText,  setInputText]  = useState('');
@@ -58,32 +60,50 @@ export default function TranslationPage() {
   const [dropdown, setDropdown] = useState<'source' | 'target' | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Auto-translate with debounce
+  const isSimplify = mode === 'simplify';
+
+  // Auto-translate / auto-simplify with debounce
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     if (!inputText.trim()) { setOutputText(''); return; }
 
     debounceRef.current = setTimeout(async () => {
       try {
-        const response = await fetch(`${BACKEND_URL}/translate`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            text: inputText,
-            source_lang: sourceLang.name,
-            target_lang: targetLang.name,
-          }),
-        });
-        const data = await response.json();
-        setOutputText(data.translation ?? '');
+        if (isSimplify) {
+          const response = await fetch(`${BACKEND_URL}/simplify`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: inputText }),
+          });
+          const data = await response.json();
+          setOutputText(data.simplified ?? '');
+        } else {
+          const response = await fetch(`${BACKEND_URL}/translate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              text: inputText,
+              source_lang: sourceLang.name,
+              target_lang: targetLang.name,
+            }),
+          });
+          const data = await response.json();
+          setOutputText(data.translation ?? '');
+        }
       } catch (e) {
-        console.log('Translate error:', e);
-        setOutputText('Übersetzung fehlgeschlagen.');
+        console.log(isSimplify ? 'Simplify error:' : 'Translate error:', e);
+        setOutputText(isSimplify ? 'Vereinfachung fehlgeschlagen.' : 'Übersetzung fehlgeschlagen.');
       }
     }, 800);
 
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-  }, [inputText, sourceLang, targetLang]);
+  }, [inputText, sourceLang, targetLang, mode]);
+
+  function switchMode(next: Mode) {
+    if (next === mode) return;
+    setMode(next);
+    setOutputText('');
+  }
 
   function swap() {
     setSourceLang(targetLang);
@@ -112,8 +132,12 @@ export default function TranslationPage() {
           <Entypo name="chevron-thin-left" size={22} color={COLORS.text} />
         </TouchableOpacity>
         <View style={styles.headerTitleRow} pointerEvents="none">
-          <Text style={styles.headerTitle}>Übersetzen</Text>
-          <MaterialCommunityIcons name="translate" size={28} color={COLORS.text} />
+          <Text style={styles.headerTitle}>{isSimplify ? 'Vereinfachen' : 'Übersetzen'}</Text>
+          {isSimplify ? (
+            <Ionicons name="sparkles-outline" size={28} color={COLORS.text} />
+          ) : (
+            <MaterialCommunityIcons name="translate" size={28} color={COLORS.text} />
+          )}
         </View>
       </View>
 
@@ -123,11 +147,17 @@ export default function TranslationPage() {
           <TouchableOpacity
             style={styles.langPill}
             activeOpacity={0.7}
+            disabled={isSimplify}
             onPress={() => setDropdown('source')}
           >
-            <Image source={sourceLang.flag} style={styles.flagSmall} />
-            <Text style={styles.langName}>{sourceLang.name}</Text>
-            <Ionicons name="chevron-down" size={16} color={COLORS.textMuted} />
+            <Image
+              source={isSimplify ? LANGUAGES[0].flag : sourceLang.flag}
+              style={styles.flagSmall}
+            />
+            <Text style={styles.langName}>{isSimplify ? 'Deutsch' : sourceLang.name}</Text>
+            {!isSimplify && (
+              <Ionicons name="chevron-down" size={16} color={COLORS.textMuted} />
+            )}
           </TouchableOpacity>
           <View style={styles.cardIcons}>
             <TouchableOpacity
@@ -141,7 +171,7 @@ export default function TranslationPage() {
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.7}
-              onPress={() => inputText && Speech.speak(inputText, { language: LANG_CODE[sourceLang.name] })}
+              onPress={() => inputText && Speech.speak(inputText, { language: isSimplify ? 'de' : LANG_CODE[sourceLang.name] })}
             >
               <Ionicons name="volume-medium-outline" size={20} color={COLORS.textMuted} />
             </TouchableOpacity>
@@ -159,25 +189,34 @@ export default function TranslationPage() {
         />
       </View>
 
-      {/* ── Swap button ── */}
-      <View style={styles.swapRow}>
-        <TouchableOpacity style={styles.swapBtn} onPress={swap} activeOpacity={0.8}>
-          <MaterialCommunityIcons name="swap-vertical" size={28} color={COLORS.text} />
-        </TouchableOpacity>
-      </View>
+      {/* ── Swap button (translate mode only) ── */}
+      {!isSimplify && (
+        <View style={styles.swapRow}>
+          <TouchableOpacity style={styles.swapBtn} onPress={swap} activeOpacity={0.8}>
+            <MaterialCommunityIcons name="swap-vertical" size={28} color={COLORS.text} />
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* ── Target card ── */}
       <View style={styles.card}>
         <View style={styles.cardTopRow}>
-          <TouchableOpacity
-            style={styles.langPill}
-            activeOpacity={0.7}
-            onPress={() => setDropdown('target')}
-          >
-            <Image source={targetLang.flag} style={styles.flagSmall} />
-            <Text style={styles.langName}>{targetLang.name}</Text>
-            <Ionicons name="chevron-down" size={16} color={COLORS.textMuted} />
-          </TouchableOpacity>
+          {isSimplify ? (
+            <View style={styles.langPill}>
+              <Ionicons name="sparkles-outline" size={18} color={COLORS.text} />
+              <Text style={styles.langName}>Einfache Sprache</Text>
+            </View>
+          ) : (
+            <TouchableOpacity
+              style={styles.langPill}
+              activeOpacity={0.7}
+              onPress={() => setDropdown('target')}
+            >
+              <Image source={targetLang.flag} style={styles.flagSmall} />
+              <Text style={styles.langName}>{targetLang.name}</Text>
+              <Ionicons name="chevron-down" size={16} color={COLORS.textMuted} />
+            </TouchableOpacity>
+          )}
           <View style={styles.cardIcons}>
             <TouchableOpacity
               activeOpacity={0.7}
@@ -187,7 +226,7 @@ export default function TranslationPage() {
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.7}
-              onPress={() => outputText && Speech.speak(outputText, { language: LANG_CODE[targetLang.name] })}
+              onPress={() => outputText && Speech.speak(outputText, { language: isSimplify ? 'de' : LANG_CODE[targetLang.name] })}
             >
               <Ionicons name="volume-medium-outline" size={20} color={COLORS.textMuted} />
             </TouchableOpacity>
@@ -199,22 +238,41 @@ export default function TranslationPage() {
             <Text style={styles.cardText}>{outputText}</Text>
           ) : (
             <Text style={[styles.cardText, { color: COLORS.textMuted, fontStyle: 'italic' }]}>
-              Übersetzung erscheint hier
+              {isSimplify ? 'Einfacher Text erscheint hier' : 'Übersetzung erscheint hier'}
             </Text>
           )}
         </ScrollView>
       </View>
 
-      {/* ── Bottom action buttons ── */}
-      <View style={styles.actions}>
-        <TouchableOpacity style={styles.actionBtn} activeOpacity={0.7}>
-          <Ionicons name="cloud-upload-outline" size={30} color={COLORS.text} />
+      {/* ── Mode selector ── */}
+      <View style={styles.modeSelector}>
+        <TouchableOpacity
+          style={[styles.modeBtn, !isSimplify && styles.modeBtnActive]}
+          onPress={() => switchMode('translate')}
+          activeOpacity={0.7}
+        >
+          <MaterialCommunityIcons
+            name="translate"
+            size={20}
+            color={!isSimplify ? COLORS.text : COLORS.textMuted}
+          />
+          <Text style={[styles.modeBtnText, isSimplify && styles.modeBtnTextInactive]}>
+            Übersetzen
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.actionBtn, styles.actionBtnPrimary]} activeOpacity={0.7}>
-          <Feather name="mic" size={32} color={COLORS.text} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.actionBtn} activeOpacity={0.7}>
-          <Ionicons name="camera-outline" size={30} color={COLORS.text} />
+        <TouchableOpacity
+          style={[styles.modeBtn, isSimplify && styles.modeBtnActive]}
+          onPress={() => switchMode('simplify')}
+          activeOpacity={0.7}
+        >
+          <Ionicons
+            name="sparkles-outline"
+            size={20}
+            color={isSimplify ? COLORS.text : COLORS.textMuted}
+          />
+          <Text style={[styles.modeBtnText, !isSimplify && styles.modeBtnTextInactive]}>
+            Vereinfachen
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -374,27 +432,34 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  // Bottom actions
-  actions: {
+  // Mode selector
+  modeSelector: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 32,
-    paddingTop: SPACING.sm,
-    paddingBottom: SPACING.lg,
-  },
-  actionBtn: {
-    width: 60,
-    height: 60,
-    borderRadius: RADIUS.pill,
     backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.pill,
+    padding: 4,
+    marginTop: SPACING.sm,
+    marginBottom: SPACING.md,
+  },
+  modeBtn: {
+    flex: 1,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: SPACING.xs,
+    height: 48,
+    borderRadius: RADIUS.pill,
   },
-  actionBtnPrimary: {
-    width: 72,
-    height: 72,
+  modeBtnActive: {
     backgroundColor: COLORS.accent,
+  },
+  modeBtnText: {
+    color: COLORS.text,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  modeBtnTextInactive: {
+    color: COLORS.textMuted,
   },
 
   // Modal dropdown
