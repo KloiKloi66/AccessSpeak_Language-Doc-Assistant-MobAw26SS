@@ -68,11 +68,15 @@ export default function HomePage() {
                 </View>
               }
             />
+        
           </Link>
+        <Link href={{ pathname: '/pages/scanningPage' }} asChild>
           <FunctionsCard
             title="Scan"
-            icon={<Ionicons name="scan-outline" size={52} color={COLORS.text} />}
+            icon={<Ionicons name="scan-outline" size={52} color={COLORS.text} />
+          }
           />
+        </Link>
         </View>
       </View>
 
