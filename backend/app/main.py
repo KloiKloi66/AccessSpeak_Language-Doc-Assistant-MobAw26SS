@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import documents
 
@@ -22,7 +22,10 @@ def get_entries():
           "title": entry["title"],
           "difficulty": entry["difficulty"],
           "type": entry["type"],
-          "date": entry["date"]
+          "date": entry["date"],
+          "originalText": entry.get("originalText", ""),
+          "simplifiedText": entry.get("simplifiedText", ""),
+          "translations": entry.get("translations", {})
       })
 
   return entries
@@ -41,11 +44,39 @@ def create_entry(entry: dict):
       "title": entry["title"],
       "difficulty": entry["difficulty"],
       "type": entry["type"],
-      "date": entry["date"]
+      "date": entry["date"],
+      "originalText": entry.get("originalText", ""),
+      "simplifiedText": "",
+      "translations": {}
   }
   documents.insert_one(document)
 
+  document.pop("_id", None)
   return document
+
+
+@app.patch("/entries/{entry_id}")
+def update_entry(entry_id: int, update: dict):
+  update_fields = {}
+
+  # Cache the simplified version (Einfache Sprache)
+  if "simplifiedText" in update:
+      update_fields["simplifiedText"] = update["simplifiedText"]
+
+  # Cache translations per language without overwriting other languages,
+  # e.g. {"translations": {"Englisch": "..."}} only touches translations.Englisch
+  for lang, text in (update.get("translations") or {}).items():
+      update_fields[f"translations.{lang}"] = text
+
+  if not update_fields:
+      raise HTTPException(status_code=400, detail="No cacheable fields in request")
+
+  result = documents.update_one({"id": entry_id}, {"$set": update_fields})
+
+  if result.matched_count == 0:
+      raise HTTPException(status_code=404, detail="Entry not found")
+
+  return {"success": True}
 
 
 @app.delete("/entries/{entry_id}")
