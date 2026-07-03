@@ -1,7 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from crewai import Crew
+
+import os
+import shutil
 
 from ai_agents.tasks import scan_task
 from ai_agents.ScanningAgent import document_agent
@@ -122,22 +125,40 @@ def crew_simplify(request: SimplifyRequest):
 # CREW
 # -------------------------
 @app.post("/scan")
-def scan_document():
+async def scan_document(file: UploadFile = File(...)):
 
     try:
+        import os
+        import shutil
+
+        os.makedirs("uploads", exist_ok=True)
+
+        image_path = os.path.join("uploads", file.filename)
+
+        with open(image_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+
+        # WICHTIG: NEUE INSTANZ pro Request
         crew = Crew(
             agents=[document_agent],
             tasks=[scan_task],
             verbose=True
         )
 
-        result = crew.kickoff(
-            inputs={"image_path": "ai_agents/test.png"}  # oder "data/test.png"
+        result = await crew.kickoff_async(
+            inputs={"image_path": image_path}
         )
 
+        return {"result": str(result)}
+
+    except Exception as e:
+        print("ERROR:", str(e))
+
         return {
-            "result": result
+            "error": str(e),
+            "message": "Fehler beim Dokument-Scan"
         }
+    
 
     except Exception as e:
 
@@ -147,5 +168,4 @@ def scan_document():
             "error": str(e),
             "message": "Fehler beim Dokument-Scan"
         }
-    
     #uvicorn ai_agents.main:app --reload  THEN http://127.0.0.1:8000/docs#/default/scan_document_scan_post

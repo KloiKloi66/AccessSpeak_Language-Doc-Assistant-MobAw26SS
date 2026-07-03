@@ -3,7 +3,7 @@ from PIL import Image
 import pytesseract
 
 pytesseract.pytesseract.tesseract_cmd = (
-    r"DATENPFAD VON TESSERACT" #SPEICHERORT VON TESSERACT EINSETZEN (DATENPFAD)
+    r"HIER TESSERACT.EXE EINFÜGEN" #SPEICHERORT VON tesseract.exe EINSETZEN (DATENPFAD)
 )
 
 class OCRTool(BaseTool):

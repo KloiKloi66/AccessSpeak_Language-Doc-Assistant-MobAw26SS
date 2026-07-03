@@ -11,10 +11,10 @@ ocr_tool = OCRTool()
 
 document_agent = Agent(
     role="Document Analyst",
-    goal="Analyse scanned documents",
+    goal="Analyse scanned documents and texts",
     backstory=(
-        "Expert in invoices, letters and forms. "
-        "Extracts structured data."
+        "Good at reading and extracting information, wont give his own opinion or spin into it"
+        "Extracts text and data and is able to summarize it."
     ),
     llm=llama,
     tools=[ocr_tool],
