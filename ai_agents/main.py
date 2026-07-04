@@ -45,9 +45,10 @@ class TranslateRequest(BaseModel):
 
 @app.post("/translate")
 def translate(request: TranslateRequest):
-    print(f"TRANSLATE: '{request.text}' [{request.source_lang} → {request.target_lang}]")
+    print(f"TRANSLATE (CrewAI): '{request.text}' [{request.source_lang} → {request.target_lang}]")
     try:
-        result = translate_text(
+        from crew.crew import run_translation
+        result = run_translation(
             text=request.text,
             source_lang=request.source_lang,
             target_lang=request.target_lang,
