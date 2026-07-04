@@ -83,7 +83,7 @@ def simplify(request: SimplifyRequest):
 def crew_translate(request: TranslateRequest):
     print(f"CREW TRANSLATE: '{request.text}' [{request.source_lang} → {request.target_lang}]")
     try:
-        from ai_agents.crew.crew import run_translation
+        from crew.crew import run_translation
         result = run_translation(
             text=request.text,
             source_lang=request.source_lang,
@@ -102,7 +102,7 @@ def crew_translate(request: TranslateRequest):
 def crew_simplify(request: SimplifyRequest):
     print(f"CREW SIMPLIFY: '{request.text}'")
     try:
-        from ai_agents.crew.crew import run_simplification
+        from crew.crew import run_simplification
         result = run_simplification(text=request.text)
         print("CREW SIMPLIFIED:", result)
         return {"simplified": result}

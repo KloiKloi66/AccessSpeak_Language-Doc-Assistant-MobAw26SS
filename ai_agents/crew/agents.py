@@ -1,10 +1,15 @@
 # agents hier definierst du später deine Agenten
+import os
 from crewai import Agent, LLM
 
-# LLM points to the local Ollama instance running llama3.2
+# LLM points to the Ollama instance. Inside Docker that is http://ollama:11434
+# (set via OLLAMA_BASE_URL in docker-compose), locally it falls back to localhost.
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.2")
+
 llama = LLM(
-    model="ollama/llama3.2",
-    base_url="http://localhost:11434",
+    model=f"ollama/{OLLAMA_MODEL}",
+    base_url=OLLAMA_BASE_URL,
 )
 
 translator_agent = Agent(
