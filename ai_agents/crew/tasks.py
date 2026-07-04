@@ -1,6 +1,6 @@
 # tasks hier definierst du die Aufgaben der Agenten
 from crewai import Task
-from .agents import translator_agent, simplifier_agent
+from .agents import translator_agent, simplifier_agent, chat_agent
 
 translate_task = Task(
     description=(
@@ -31,4 +31,18 @@ simplify_task = Task(
         "with the first word of the text. No extra words, no explanations, no quotes."
     ),
     agent=simplifier_agent,
+)
+
+chat_task = Task(
+    description=(
+        "Respond to the user message in a helpful and concise way.\n\n"
+        "If the user asks about documents or stored content, use the provided document_context as the primary source of information.\n"
+        "Document context:\n{document_context}\n\n"
+        "Message:\n{message}"
+    ),
+    expected_output=(
+        "A helpful assistant response in the appropriate language. "
+        "For document-related questions, use the provided document_context and clearly state when information is missing."
+    ),
+    agent=chat_agent,
 )
