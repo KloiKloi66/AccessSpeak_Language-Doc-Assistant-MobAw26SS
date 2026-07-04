@@ -2,7 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from chatbot import ask_chatbot
+from chatbot import ask_chatbot, _get_document_context
+from ai_agents.crew.crew import run_chatbot as run_crew_chatbot
 
 app = FastAPI()
 
@@ -25,12 +26,18 @@ class ChatRequest(BaseModel):
 def chat(request: ChatRequest):
     print("CHAT REQUEST:", request.message)
     try:
-        answer = ask_chatbot(request.message)
-        print("CHAT ANSWER:", answer)
+        answer = run_crew_chatbot(
+            message=request.message, 
+            document_context=_get_document_context()
+        )
         return {"response": answer}
     except Exception as e:
         print("CHAT ERROR:", str(e))
-        return {"response": "Fehler im Backend", "error": str(e)}
+        try:
+            answer = ask_chatbot(request.message)
+            return {"response": answer}
+        except Exception as e:
+            return {"response": "Error: Kommunikationsfehler mit Ollama", "error": str(e)}
 
 
 # ── Translation ───────────────────────────────────────────
@@ -75,3 +82,15 @@ def simplify(request: SimplifyRequest):
     except Exception as e:
         print("SIMPLIFY ERROR:", str(e))
         return {"simplified": "", "error": str(e)}
+
+# crewAI chat 
+@app.post("/crew/chat")
+def crew_chat(request: ChatRequest):
+    try:
+        answer = run_crew_chatbot(
+            message=request.message, 
+            document_context=_get_document_context()
+        )
+        return {"response": answer}
+    except Exception as e:
+        return {"response": "Error: Kommunikationsfehler mit CrewAI", "error": str(e)}
