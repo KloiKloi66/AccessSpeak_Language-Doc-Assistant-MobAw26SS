@@ -3,8 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from chatbot import ask_chatbot
-from translate import translate_text
-from simplify import simplify_text
 
 app = FastAPI()
 
@@ -76,38 +74,4 @@ def simplify(request: SimplifyRequest):
         return {"simplified": result}
     except Exception as e:
         print("SIMPLIFY ERROR:", str(e))
-        return {"simplified": "", "error": str(e)}
-
-
-# ── CrewAI Translation ────────────────────────────────────
-
-@app.post("/crew/translate")
-def crew_translate(request: TranslateRequest):
-    print(f"CREW TRANSLATE: '{request.text}' [{request.source_lang} → {request.target_lang}]")
-    try:
-        from crew.crew import run_translation
-        result = run_translation(
-            text=request.text,
-            source_lang=request.source_lang,
-            target_lang=request.target_lang,
-        )
-        print("CREW TRANSLATION:", result)
-        return {"translation": result}
-    except Exception as e:
-        print("CREW TRANSLATE ERROR:", str(e))
-        return {"translation": "", "error": str(e)}
-
-
-# ── CrewAI Simplification ─────────────────────────────────
-
-@app.post("/crew/simplify")
-def crew_simplify(request: SimplifyRequest):
-    print(f"CREW SIMPLIFY: '{request.text}'")
-    try:
-        from crew.crew import run_simplification
-        result = run_simplification(text=request.text)
-        print("CREW SIMPLIFIED:", result)
-        return {"simplified": result}
-    except Exception as e:
-        print("CREW SIMPLIFY ERROR:", str(e))
         return {"simplified": "", "error": str(e)}
