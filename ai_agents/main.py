@@ -68,9 +68,10 @@ class SimplifyRequest(BaseModel):
 
 @app.post("/simplify")
 def simplify(request: SimplifyRequest):
-    print(f"SIMPLIFY: '{request.text}'")
+    print(f"SIMPLIFY (CrewAI): '{request.text}'")
     try:
-        result = simplify_text(text=request.text)
+        from crew.crew import run_simplification
+        result = run_simplification(text=request.text)
         print("SIMPLIFIED:", result)
         return {"simplified": result}
     except Exception as e:
