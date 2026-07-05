@@ -5,7 +5,7 @@ uvicorn[standard]
 # Data validation (used by FastAPI)
 pydantic
 
-# HTTP requests (used by translate.py to call Ollama)
+# HTTP requests (used by chatbot.py to call Ollama)
 requests
 
 # CrewAI and its tools package

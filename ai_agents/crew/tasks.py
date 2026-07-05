@@ -16,15 +16,19 @@ translate_task = Task(
 
 simplify_task = Task(
     description=(
-        "Rewrite the following German text in 'Einfache Sprache'. "
+        "You are NOT a translator. Rewrite the following German text in "
+        "'Einfache Sprache' (German to simple German). "
         "Use short sentences (max. 12 words), common words, active voice. "
         "Explain difficult terms briefly in parentheses. "
-        "Keep all information complete and correct.\n\n"
+        "Keep all information complete and correct. "
+        "IMPORTANT: Your answer starts directly with the first word of the "
+        "rewritten text. No introduction like 'Hier ist...', no explanations, "
+        "no quotes, no formatting.\n\n"
         "Text:\n{text}"
     ),
     expected_output=(
-        "Only the rewritten German text in Einfache Sprache. "
-        "No extra words, no explanations, no quotes."
+        "Only the rewritten German text in Einfache Sprache, starting directly "
+        "with the first word of the text. No extra words, no explanations, no quotes."
     ),
     agent=simplifier_agent,
 )
