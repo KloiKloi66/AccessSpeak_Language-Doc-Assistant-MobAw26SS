@@ -32,6 +32,7 @@ services:
       OLLAMA_URL: http://ollama:11434/api/generate
       OLLAMA_BASE_URL: http://ollama:11434
       OLLAMA_MODEL: llama3.2
+      ENTRY_API_URL: http://backend:8000/entries
 
 volumes:
   mongodb_data:

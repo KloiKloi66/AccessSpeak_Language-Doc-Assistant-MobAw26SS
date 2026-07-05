@@ -2,9 +2,8 @@
 import re
 
 from crewai import Crew, Process
-from .agents import translator_agent, simplifier_agent
-from .tasks import translate_task, simplify_task
-
+from .agents import translator_agent, simplifier_agent, chat_agent
+from .tasks import translate_task, simplify_task, chat_task
 # Preamble lines the model sometimes adds despite instructions,
 # e.g. "Hier ist die Übersetzung:" or "Sure! Here is the text:"
 PREAMBLE_PATTERN = re.compile(
@@ -14,7 +13,6 @@ PREAMBLE_PATTERN = re.compile(
 
 def _strip_preamble(text: str) -> str:
     return PREAMBLE_PATTERN.sub("", text, count=1).strip()
-
 
 def run_translation(text: str, source_lang: str, target_lang: str) -> str:
     crew = Crew(
@@ -28,8 +26,7 @@ def run_translation(text: str, source_lang: str, target_lang: str) -> str:
         "source_lang": source_lang,
         "target_lang": target_lang,
     })
-    return _strip_preamble(str(result))
-
+    return str(result)
 
 def run_simplification(text: str) -> str:
     crew = Crew(
@@ -40,3 +37,16 @@ def run_simplification(text: str) -> str:
     )
     result = crew.kickoff(inputs={"text": text})
     return _strip_preamble(str(result))
+
+def run_chatbot(message: str, document_context: str = "") -> str:
+    crew = Crew(
+        agents=[chat_agent],
+        tasks=[chat_task],
+        process=Process.sequential,
+        verbose=True,
+    )
+    result = crew.kickoff(inputs={
+        "message": message,
+        "document_context": document_context,
+    })
+    return str(result)
