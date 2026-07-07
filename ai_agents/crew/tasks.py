@@ -1,6 +1,6 @@
 # tasks hier definierst du die Aufgaben der Agenten
 from crewai import Task
-from .agents import translator_agent, simplifier_agent, chat_agent
+from .agents import translator_agent, simplifier_agent, chat_agent, document_agent
 
 translate_task = Task(
     description=(
@@ -45,4 +45,16 @@ chat_task = Task(
         "For document-related questions, use the provided document_context and clearly state when information is missing."
     ),
     agent=chat_agent,
+)
+
+
+scan_task = Task(
+    description=(
+        "Analyse the document at {image_path}.\n"
+        "Use OCR tool to extract text and then analyse it. ONLY use the text returned by the OCR Tool. NEVER invent names, dates, addresses or amounts.If information is missing, write 'Not found'. If OCR is unreadable, say so."
+    ),
+    expected_output=(
+        "Return structured info: type of text, key data, summary"
+    ),
+    agent=document_agent,
 )

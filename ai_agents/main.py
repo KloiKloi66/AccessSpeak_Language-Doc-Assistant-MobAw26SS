@@ -1,11 +1,17 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel 
 
 import os
 import requests
+import shutil
 
 from crew.crew import run_chatbot as run_crew_chatbot
+
+from crew.tasks import scan_task
+from crew.agents import document_agent
+from crewai import Crew
+
 
 ENTRY_API_URL = os.getenv("ENTRY_API_URL", "http://localhost:8000/entries")
 
@@ -110,3 +116,40 @@ def simplify(request: SimplifyRequest):
         print("SIMPLIFY ERROR:", str(e))
         return {"simplified": "", "error": str(e)}
     
+
+
+@app.get("/")
+def root():
+    return {"status": "ok"}
+
+# ── Scanning ──────────────────────────────────────────────
+
+@app.post("/scan")
+async def scan_document(file: UploadFile = File(...)):
+    try:
+        os.makedirs("uploads", exist_ok=True)
+
+        image_path = os.path.join("uploads", file.filename)
+
+        with open(image_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+
+        # Crew AI Execution
+        crew = Crew(
+            agents=[document_agent],
+            tasks=[scan_task],
+            verbose=True
+        )
+
+        result = await crew.kickoff_async(
+            inputs={"image_path": image_path}
+        )
+
+        return {"result": str(result)}
+
+    except Exception as e:
+        print("ERROR:", str(e))
+        return {
+            "error": str(e),
+            "message": "Fehler beim Dokument-Scan"
+        }
