@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
-import { View, StyleSheet, Text, ActivityIndicator,} from 'react-native';
+import { View, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import * as ImagePicker from 'expo-image-picker';
 
 import PageHeader from '../../components/page-header.component';
 import PermissionCard from '../../components/permission-card.component';
@@ -41,7 +42,7 @@ export default function CameraPage() {
         return;
       }
 
-      console.log("📸 Photo taken:", photo.uri);
+      console.log("Photo taken:", photo.uri);
 
       const formData = new FormData();
 
@@ -79,6 +80,69 @@ export default function CameraPage() {
     }
   }
 
+
+  async function pickImage() {
+    try {
+      const permission =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (!permission.granted) {
+        alert("Bitte erlaube den Zugriff auf die Galerie.");
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        quality: 1,
+      });
+
+      if (result.canceled) {
+        return;
+      }
+
+      const image = result.assets[0];
+
+      console.log("Gallery image selected:", image.uri);
+
+      setLoading(true);
+      setScanResult("");
+
+      const formData = new FormData();
+
+      formData.append("file", {
+        uri: image.uri,
+        name: "document.jpg",
+        type: "image/jpeg",
+      } as any);
+
+      const response = await fetch(`${API_URL}/scan`, {
+        method: "POST",
+        body: formData,
+      });
+
+      console.log("STATUS:", response.status);
+
+      const data = await response.json();
+      console.log("DATA:", data);
+
+      if (!response.ok) {
+        setScanResult(
+          data?.detail || data?.message || "Fehler beim Scan"
+        );
+        return;
+      }
+
+      setScanResult(data.result ?? "");
+
+    } catch (error) {
+      console.error("GALLERY SCAN ERROR:", error);
+      setScanResult("Fehler beim Galerie-Scan");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+
   return (
     <View style={styles.mainView}>
       <PageHeader>Scanner</PageHeader>
@@ -94,7 +158,11 @@ export default function CameraPage() {
           </View>
 
           <View style={styles.buttonArea}>
-            <Button style={styles.button} size="medium">
+            <Button
+              onPress={pickImage}
+              style={styles.button}
+              size="medium"
+            >
               <SimpleLineIcons
                 name="picture"
                 size={24}
