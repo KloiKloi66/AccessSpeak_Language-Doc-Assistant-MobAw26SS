@@ -72,6 +72,14 @@ def create_entry(entry: dict):
 def update_entry(entry_id: int, update: dict):
   update_fields = {}
 
+  # Manual difficulty override — always stored as "manual" so the
+  # automatic (LIX) rating never touches it again
+  if "difficulty" in update:
+      if update["difficulty"] not in DIFFICULTY_LEVELS:
+          raise HTTPException(status_code=400, detail="Invalid difficulty")
+      update_fields["difficulty"] = update["difficulty"]
+      update_fields["difficultySource"] = "manual"
+
   # Cache the simplified version (Einfache Sprache)
   if "simplifiedText" in update:
       update_fields["simplifiedText"] = update["simplifiedText"]
