@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, Text, ActivityIndicator,} from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 
 import PageHeader from '../../components/page-header.component';
@@ -11,14 +11,15 @@ import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 //const API_URL = `http://${devHost}:8001`; // for use with physical device on same network
-//const API_URL = `http://:127.0.0.18001`;
-const API_URL = `http://10.0.2.2:8001`; // for android emulator
+//const API_URL = `http://127.0.0.1:8001`;
+const API_URL = `http://10.0.2.2:8001`; // Android Emulator
 
 export default function CameraPage() {
   const cameraRef = useRef<CameraView>(null);
 
   const [permission, requestPermission] = useCameraPermissions();
   const [scanResult, setScanResult] = useState<string>("");
+  const [loading, setLoading] = useState(false);
 
   if (!permission) {
     return <View />;
@@ -28,11 +29,17 @@ export default function CameraPage() {
     try {
       if (!cameraRef.current) return;
 
+      setLoading(true);
+      setScanResult("");
+
       const photo = await cameraRef.current.takePictureAsync({
         quality: 1,
       });
 
-      if (!photo?.uri) return;
+      if (!photo?.uri) {
+        setLoading(false);
+        return;
+      }
 
       console.log("📸 Photo taken:", photo.uri);
 
@@ -56,7 +63,9 @@ export default function CameraPage() {
 
       if (!response.ok) {
         console.log("Backend Error:", data);
-        setScanResult(data?.detail || data?.message || "Fehler beim Scan");
+        setScanResult(
+          data?.detail || data?.message || "Fehler beim Scan"
+        );
         return;
       }
 
@@ -65,6 +74,8 @@ export default function CameraPage() {
     } catch (error) {
       console.error("SCAN ERROR:", error);
       setScanResult("Verbindungsfehler beim Scan");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -84,7 +95,11 @@ export default function CameraPage() {
 
           <View style={styles.buttonArea}>
             <Button style={styles.button} size="medium">
-              <SimpleLineIcons name="picture" size={24} color="black" />
+              <SimpleLineIcons
+                name="picture"
+                size={24}
+                color="black"
+              />
             </Button>
 
             <Button
@@ -92,7 +107,11 @@ export default function CameraPage() {
               style={styles.button}
               size="large"
             >
-              <Feather name="camera" size={28} color="black" />
+              <Feather
+                name="camera"
+                size={28}
+                color="black"
+              />
             </Button>
 
             <Button style={styles.button} size="medium">
@@ -106,7 +125,18 @@ export default function CameraPage() {
 
           {scanResult !== "" && (
             <View style={styles.resultBox}>
-              <Text style={styles.resultText}>{scanResult}</Text>
+              <Text style={styles.resultText}>
+                {scanResult}
+              </Text>
+            </View>
+          )}
+
+          {loading && (
+            <View style={styles.loadingOverlay}>
+              <ActivityIndicator size="large" color="#ffffff" />
+              <Text style={styles.loadingText}>
+                Dokument wird gescannt...
+              </Text>
             </View>
           )}
         </>
@@ -161,5 +191,18 @@ const styles = StyleSheet.create({
   resultText: {
     color: 'black',
     fontSize: 16,
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+  },
+  loadingText: {
+    color: 'white',
+    marginTop: 20,
+    fontSize: 18,
+    fontWeight: '600',
   },
 });
