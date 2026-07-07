@@ -10,6 +10,7 @@ import {
   Platform,
 } from 'react-native';
 import Constants from 'expo-constants';
+import { useRoute } from '@react-navigation/native';
 
 import PageHeader from '../../components/page-header.component';
 import { COLORS, RADIUS, SPACING } from '../../theme';
@@ -21,8 +22,25 @@ const BACKEND_URL = `http://${devHost}:8001`; // for use with physical device on
 // const BACKEND_URL = `http://10.0.2.2:8001`; // for android emulator
 
 export default function ChatBotPage() {
+  const route = useRoute<any>();
+
+  const documentContext = route.params?.documentContext ?? "";
+
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<any[]>([]);
+
+  const [messages, setMessages] = useState<any[]>(() => {
+    if (documentContext) {
+      return [
+        {
+          id: Date.now().toString(),
+          sender: 'bot',
+          text: `Ich habe das gescannte Dokument erhalten. Hier ist die Analyse:\n\n${documentContext}`,
+        },
+      ];
+    }
+
+    return [];
+  });
 
   const sendMessage = async () => {
     if (!message.trim()) return;
@@ -40,8 +58,13 @@ export default function ChatBotPage() {
     try {
       const response = await fetch(`${BACKEND_URL}/chat`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: currentMessage }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: currentMessage,
+          document_context: documentContext,
+        }),
       });
 
       const data = await response.json();

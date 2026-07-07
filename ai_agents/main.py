@@ -57,6 +57,7 @@ app.add_middleware(
 
 class ChatRequest(BaseModel):
     message: str
+    document_context: str = ""
 
 
 @app.post("/chat")
@@ -65,7 +66,7 @@ def chat(request: ChatRequest):
     try:
         answer = run_crew_chatbot(
             message=request.message, 
-            document_context=_get_document_context()
+            document_context=request.document_context
         )
         return {"response": answer}
     except Exception as e:

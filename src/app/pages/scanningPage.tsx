@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { View, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
+import { router } from 'expo-router';
 
 import PageHeader from '../../components/page-header.component';
 import PermissionCard from '../../components/permission-card.component';
@@ -143,6 +144,16 @@ export default function CameraPage() {
   }
 
 
+  function openChatbot() {
+    router.push({
+      pathname: "/(tabs)/chatBotPage",
+      params: {
+        documentContext: scanResult,
+      },
+    });
+  }
+
+
   return (
     <View style={styles.mainView}>
       <PageHeader>Scanner</PageHeader>
@@ -182,9 +193,13 @@ export default function CameraPage() {
               />
             </Button>
 
-            <Button style={styles.button} size="medium">
+            <Button
+              onPress={openChatbot}
+              style={styles.button}
+              size="medium"
+            >
               <MaterialCommunityIcons
-                name="robot-dead-outline"
+                name="robot-outline"
                 size={24}
                 color="black"
               />
@@ -201,7 +216,11 @@ export default function CameraPage() {
 
           {loading && (
             <View style={styles.loadingOverlay}>
-              <ActivityIndicator size="large" color="#ffffff" />
+              <ActivityIndicator
+                size="large"
+                color="#ffffff"
+              />
+
               <Text style={styles.loadingText}>
                 Dokument wird gescannt...
               </Text>
