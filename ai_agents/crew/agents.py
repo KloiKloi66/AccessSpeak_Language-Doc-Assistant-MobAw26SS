@@ -1,6 +1,7 @@
 # agents hier definierst du später deine Agenten
 import os
 from crewai import Agent, LLM
+from .tools import OCRTool
 
 # LLM points to the Ollama instance. Inside Docker that is http://ollama:11434
 # (set via OLLAMA_BASE_URL in docker-compose), locally it falls back to localhost.
@@ -66,3 +67,18 @@ chat_agent = Agent(
     llm=llama,
     verbose=True,
 )
+
+ocr_tool = OCRTool()
+
+document_agent = Agent(
+    role="Document Analyst",
+    goal="Analyse scanned documents and texts",
+    backstory=(
+        "Good at reading and extracting information, wont give his own opinion or spin into it"
+        "Extracts text and data and is able to return it perfectly without changing it."
+    ),
+    llm=llama,
+    tools=[ocr_tool],
+    verbose=True,
+)
+
