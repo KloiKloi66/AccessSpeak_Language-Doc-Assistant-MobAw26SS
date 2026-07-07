@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 type Entry = {
   title: string;
   difficulty: string;
+  difficultySource: string;
   type: string;
   date: string;
   originalText: string;
@@ -13,11 +14,12 @@ type Entry = {
 
 type DataContextType = {
   entries: Entry[];
-  addEntry: (title: string, difficulty: string, type: string, date: string, originalText: string) => Promise<void>;
+  addEntry: (title: string, type: string, date: string, originalText: string, difficulty?: string) => Promise<void>;
   removeEntryById: (id: string) => Promise<void>;
   getEntryById: (id: string) => Entry | undefined;
   cacheSimplifiedText: (id: number, text: string) => Promise<void>;
   cacheTranslation: (id: number, language: string, text: string) => Promise<void>;
+  setDifficulty: (id: number, difficulty: string) => Promise<void>;
 };
 
 const DataContext = createContext<DataContextType | null>(null);
@@ -55,7 +57,7 @@ export function DataProvider({children}: {children: React.ReactNode}) {
 
   useEffect(() => {fetchEntries();}, []);
 
-  const addEntry = async (title: string, difficulty: string, type: string, date: string, originalText: string) => {
+  const addEntry = async (title: string, type: string, date: string, originalText: string, difficulty?: string) => {
     try {
       const response = await fetch(`${API_URL}/entries`, {
         method: "POST",
@@ -64,10 +66,10 @@ export function DataProvider({children}: {children: React.ReactNode}) {
         },
         body: JSON.stringify({
           title,
-          difficulty,
           type,
           date,
           originalText,
+          ...(difficulty ? { difficulty } : {}),
         }),
       });
 
@@ -134,6 +136,14 @@ export function DataProvider({children}: {children: React.ReactNode}) {
     );
   };
 
+  const setDifficulty = async (id: number, difficulty: string) => {
+    await patchEntry(
+      id,
+      { difficulty },
+      (entry) => ({ ...entry, difficulty, difficultySource: "manual" })
+    );
+  };
+
   return (
     <DataContext.Provider
       value={{
@@ -143,6 +153,7 @@ export function DataProvider({children}: {children: React.ReactNode}) {
         getEntryById,
         cacheSimplifiedText,
         cacheTranslation,
+        setDifficulty,
       }}
     >
       {children}
