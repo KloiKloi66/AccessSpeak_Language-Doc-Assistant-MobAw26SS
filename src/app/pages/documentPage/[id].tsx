@@ -56,13 +56,14 @@ type ViewMode = 'original' | 'einfach' | 'uebersetzt';
 export default function DocumentPage() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { getEntryById, cacheSimplifiedText, cacheTranslation } = useDocuments();
+  const { getEntryById, cacheSimplifiedText, cacheTranslation, setDifficulty } = useDocuments();
 
   const [viewMode, setViewMode] = useState<ViewMode>('original');
   const [simplifyError, setSimplifyError] = useState<string | null>(null);
   const [translateError, setTranslateError] = useState<string | null>(null);
   const [targetLang, setTargetLang] = useState<Language | null>(null);
   const [langModalOpen, setLangModalOpen] = useState(false);
+  const [diffModalOpen, setDiffModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
 
@@ -200,9 +201,14 @@ export default function DocumentPage() {
         <>
           {/* ── Meta row ── */}
           <View style={styles.metaRow}>
-            <View style={[styles.badge, { backgroundColor: badge.bg }]}>
+            <TouchableOpacity
+              style={[styles.badge, { backgroundColor: badge.bg }]}
+              onPress={() => setDiffModalOpen(true)}
+              activeOpacity={0.7}
+            >
               <Text style={[styles.badgeText, { color: badge.text }]}>{entry.difficulty}</Text>
-            </View>
+              <Ionicons name="chevron-down" size={14} color={badge.text} />
+            </TouchableOpacity>
             <View style={styles.metaItem}>
               <Ionicons
                 name={entry.type === 'document' ? 'document-text-outline' : 'image-outline'}
@@ -337,6 +343,45 @@ export default function DocumentPage() {
         </View>
       )}
 
+      {/* ── Difficulty selection modal ── */}
+      <Modal
+        visible={diffModalOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setDiffModalOpen(false)}
+      >
+        <TouchableWithoutFeedback onPress={() => setDiffModalOpen(false)}>
+          <View style={styles.modalOverlay}>
+            <TouchableWithoutFeedback>
+              <View style={styles.modalSheet}>
+                <Text style={styles.modalTitle}>Schwierigkeit wählen</Text>
+                {(['leicht', 'mittel', 'schwierig'] as const).map((level) => {
+                  const levelBadge = BADGE_COLORS[level];
+                  const isSelected = entry?.difficulty === level;
+                  return (
+                    <TouchableOpacity
+                      key={level}
+                      style={[styles.modalItem, isSelected && styles.modalItemActive]}
+                      onPress={() => {
+                        if (entry) setDifficulty(entry.id, level);
+                        setDiffModalOpen(false);
+                      }}
+                      activeOpacity={0.7}
+                    >
+                      <View style={[styles.badge, { backgroundColor: levelBadge.bg }]}>
+                        <Text style={[styles.badgeText, { color: levelBadge.text }]}>{level}</Text>
+                      </View>
+                      <View style={{ flex: 1 }} />
+                      {isSelected && <Ionicons name="checkmark" size={20} color={COLORS.accent} />}
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+
       {/* ── Language selection modal ── */}
       <Modal
         visible={langModalOpen}
@@ -416,6 +461,9 @@ const styles = StyleSheet.create({
     gap: SPACING.md,
   },
   badge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: RADIUS.pill,
