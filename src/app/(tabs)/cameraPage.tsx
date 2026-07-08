@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
+import { router } from 'expo-router';
 
 import PageHeader from '../../components/page-header.component';
 import PermissionCard from '../../components/permission-card.component';
@@ -58,6 +59,10 @@ export default function CameraPage() {
     }
   }
 
+  function openChatbot() {
+  router.push('/(tabs)/chatBotPage');
+ }
+
   return (
     <View style={styles.root}>
       <PageHeader>Kamera</PageHeader>
@@ -97,13 +102,17 @@ export default function CameraPage() {
               />
             </Button>
 
-            <Button size="medium" style={styles.sideBtn}>
-              <MaterialCommunityIcons
-                name="robot-outline"
-                size={22}
-                color={COLORS.text}
-              />
-            </Button>
+            <Button
+              size="medium"
+              style={styles.sideBtn}
+              onPress={openChatbot}
+            >
+               <MaterialCommunityIcons
+                  name="robot-outline"
+                 size={22}
+                 color={COLORS.text}
+               />
+          </Button>
           </View>
         </>
       ) : (
