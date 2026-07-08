@@ -11,6 +11,12 @@ WORKDIR /app
 # If only code changes (not requirements), Docker skips reinstalling packages.
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+RUN apt-get update && apt-get install -y \
+    tesseract-ocr \
+    tesseract-ocr-deu \
+    tesseract-ocr-eng \
+    && rm -rf /var/lib/apt/lists/*
+
 
 # ── Copy application code ────────────────────────────────────────────────────
 COPY . .
