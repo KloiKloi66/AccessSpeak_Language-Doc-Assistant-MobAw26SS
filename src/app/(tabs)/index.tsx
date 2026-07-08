@@ -69,6 +69,7 @@ export default function HomePage() {
                 </View>
               }
             />
+        
           </Link>
         <Link href={{ pathname: '/pages/scanningPage' }} asChild>
           <FunctionsCard
