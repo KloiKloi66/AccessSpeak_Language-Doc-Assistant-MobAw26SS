@@ -49,7 +49,7 @@ export default function HomePage() {
           <FunctionsCard
             title="Kamera"
             icon={<Ionicons name="camera-outline" size={52} color={COLORS.text} />}
-                onPress={() => router.push('/(tabs)/cameraPage')}
+            onPress={() => router.push('/(tabs)/cameraPage')}
           />
           <Link href={{ pathname: '/(tabs)/chatBotPage' }} asChild>
             <FunctionsCard

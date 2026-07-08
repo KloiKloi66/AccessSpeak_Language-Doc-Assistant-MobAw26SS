@@ -1,6 +1,9 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import documents
+from app.difficulty import difficulty_from_text
+
+DIFFICULTY_LEVELS = {"leicht", "mittel", "schwierig"}
 
 app = FastAPI()
 
@@ -21,6 +24,7 @@ def get_entries():
           "id": entry["id"],
           "title": entry["title"],
           "difficulty": entry["difficulty"],
+          "difficultySource": entry.get("difficultySource", "manual"),
           "type": entry["type"],
           "date": entry["date"],
           "originalText": entry.get("originalText", ""),
@@ -39,10 +43,19 @@ def create_entry(entry: dict):
   if last:
       next_id = last["id"] + 1
       
+  manual_difficulty = entry.get("difficulty")
+  if manual_difficulty in DIFFICULTY_LEVELS:
+      difficulty = manual_difficulty
+      difficulty_source = "manual"
+  else:
+      difficulty = difficulty_from_text(entry.get("originalText", ""))
+      difficulty_source = "auto"
+
   document = {
       "id": next_id,
       "title": entry["title"],
-      "difficulty": entry["difficulty"],
+      "difficulty": difficulty,
+      "difficultySource": difficulty_source,
       "type": entry["type"],
       "date": entry["date"],
       "originalText": entry.get("originalText", ""),
@@ -58,6 +71,14 @@ def create_entry(entry: dict):
 @app.patch("/entries/{entry_id}")
 def update_entry(entry_id: int, update: dict):
   update_fields = {}
+
+  # Manual difficulty override — always stored as "manual" so the
+  # automatic (LIX) rating never touches it again
+  if "difficulty" in update:
+      if update["difficulty"] not in DIFFICULTY_LEVELS:
+          raise HTTPException(status_code=400, detail="Invalid difficulty")
+      update_fields["difficulty"] = update["difficulty"]
+      update_fields["difficultySource"] = "manual"
 
   # Cache the simplified version (Einfache Sprache)
   if "simplifiedText" in update:

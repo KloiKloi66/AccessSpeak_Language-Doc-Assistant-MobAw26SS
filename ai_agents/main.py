@@ -1,16 +1,46 @@
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from crewai import Crew
+from pydantic import BaseModel 
 
 import os
+import requests
 import shutil
 
-from ai_agents.tasks import scan_task
-from ai_agents.ScanningAgent import document_agent
-from chatbot import ask_chatbot
-from translate import translate_text
-from simplify import simplify_text
+from crew.crew import run_chatbot as run_crew_chatbot
+
+from crew.tasks import scan_task
+from crew.agents import document_agent
+from crewai import Crew
+
+
+ENTRY_API_URL = os.getenv("ENTRY_API_URL", "http://localhost:8000/entries")
+
+def _get_document_context() -> str:
+    """
+        Load all stored entries from the backend and format them for the LLM prompt.
+    """
+
+    response = requests.get(ENTRY_API_URL, timeout=30)
+    response.raise_for_status()
+    entries = response.json()
+
+    if not entries:
+        return "Es sind aktuell keine Dokumente in der Datenbank gespeichert."
+
+    formattedEntries = []
+    for entry in entries:
+        originalText = (entry.get("originalText") or "").strip()
+        title = entry.get("title") or f"Dokument {entry.get('id')}"
+        formattedEntries.append(
+            f"Dokument {entry.get('id')}: {title}\n"
+            f"Typ: {entry.get('type', '')}\n"
+            f"Schwierigkeit: {entry.get('difficulty', '')}\n"
+            f"Originaltext: {originalText or '[kein Text verfügbar]'}\n"
+            f"Wichtiger Hinweis: Der eigentliche Inhaltsbereich dieses Dokuments befindet sich im Feld 'Originaltext'. "
+            f"Bei Fragen zum Inhalt soll die KI genau diesen Bereich als Hauptquelle verwenden."
+        )
+
+    return "\n\n".join(formattedEntries)
 
 app = FastAPI()
 
@@ -27,6 +57,7 @@ app.add_middleware(
 
 class ChatRequest(BaseModel):
     message: str
+    document_context: str = ""
 
 
 # -------------------------
@@ -36,12 +67,14 @@ class ChatRequest(BaseModel):
 def chat(request: ChatRequest):
     print("CHAT REQUEST:", request.message)
     try:
-        answer = ask_chatbot(request.message)
-        print("CHAT ANSWER:", answer)
+        answer = run_crew_chatbot(
+            message=request.message, 
+            document_context=request.document_context
+        )
         return {"response": answer}
     except Exception as e:
         print("CHAT ERROR:", str(e))
-        return {"response": "Fehler im Backend", "error": str(e)}
+        return {"response": "Error: Kommunikationsfehler mit CrewAI", "error": str(e)}
 
 
 # ── Translation ───────────────────────────────────────────
@@ -54,9 +87,10 @@ class TranslateRequest(BaseModel):
 
 @app.post("/translate")
 def translate(request: TranslateRequest):
-    print(f"TRANSLATE: '{request.text}' [{request.source_lang} → {request.target_lang}]")
+    print(f"TRANSLATE (CrewAI): '{request.text}' [{request.source_lang} → {request.target_lang}]")
     try:
-        result = translate_text(
+        from crew.crew import run_translation
+        result = run_translation(
             text=request.text,
             source_lang=request.source_lang,
             target_lang=request.target_lang,
@@ -76,61 +110,27 @@ class SimplifyRequest(BaseModel):
 
 @app.post("/simplify")
 def simplify(request: SimplifyRequest):
-    print(f"SIMPLIFY: '{request.text}'")
+    print(f"SIMPLIFY (CrewAI): '{request.text}'")
     try:
-        result = simplify_text(text=request.text)
+        from crew.crew import run_simplification
+        result = run_simplification(text=request.text)
         print("SIMPLIFIED:", result)
         return {"simplified": result}
     except Exception as e:
         print("SIMPLIFY ERROR:", str(e))
         return {"simplified": "", "error": str(e)}
+    
 
 
-# ── CrewAI Translation ────────────────────────────────────
+@app.get("/")
+def root():
+    return {"status": "ok"}
 
-@app.post("/crew/translate")
-def crew_translate(request: TranslateRequest):
-    print(f"CREW TRANSLATE: '{request.text}' [{request.source_lang} → {request.target_lang}]")
-    try:
-        from ai_agents.crew.crew import run_translation
-        result = run_translation(
-            text=request.text,
-            source_lang=request.source_lang,
-            target_lang=request.target_lang,
-        )
-        print("CREW TRANSLATION:", result)
-        return {"translation": result}
-    except Exception as e:
-        print("CREW TRANSLATE ERROR:", str(e))
-        return {"translation": "", "error": str(e)}
+# ── Scanning ──────────────────────────────────────────────
 
-
-# ── CrewAI Simplification ─────────────────────────────────
-
-@app.post("/crew/simplify")
-def crew_simplify(request: SimplifyRequest):
-    print(f"CREW SIMPLIFY: '{request.text}'")
-    try:
-        from ai_agents.crew.crew import run_simplification
-        result = run_simplification(text=request.text)
-        print("CREW SIMPLIFIED:", result)
-        return {"simplified": result}
-    except Exception as e:
-        print("CREW SIMPLIFY ERROR:", str(e))
-        return {"simplified": "", "error": str(e)}
-
-
-
-# -------------------------
-# CREW
-# -------------------------
 @app.post("/scan")
 async def scan_document(file: UploadFile = File(...)):
-
     try:
-        import os
-        import shutil
-
         os.makedirs("uploads", exist_ok=True)
 
         image_path = os.path.join("uploads", file.filename)
@@ -138,7 +138,7 @@ async def scan_document(file: UploadFile = File(...)):
         with open(image_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
-        # WICHTIG: NEUE INSTANZ pro Request
+        # Crew AI Execution
         crew = Crew(
             agents=[document_agent],
             tasks=[scan_task],
@@ -153,19 +153,7 @@ async def scan_document(file: UploadFile = File(...)):
 
     except Exception as e:
         print("ERROR:", str(e))
-
         return {
             "error": str(e),
             "message": "Fehler beim Dokument-Scan"
         }
-    
-
-    except Exception as e:
-
-        print("ERROR:", str(e))
-
-        return {
-            "error": str(e),
-            "message": "Fehler beim Dokument-Scan"
-        }
-    #uvicorn ai_agents.main:app --reload  THEN http://127.0.0.1:8000/docs#/default/scan_document_scan_post
