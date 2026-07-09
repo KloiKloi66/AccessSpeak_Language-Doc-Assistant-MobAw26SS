@@ -70,14 +70,15 @@ export default function CameraPage() {
         return;
       }
 
-      setScanResult(data.result ?? "");
+      setScanResult(data.text ?? "");
 
+   // Title comes from the agent, originalText is the verbatim OCR text.
+   // No manual difficulty: the backend rates the text automatically (LIX).
    await addEntry(
-     "Gescanntes Dokument",
+     data.title || "Gescanntes Dokument",
      "document",
      new Date().toLocaleDateString(),
-     data.result ?? "",
-     "mittel"
+     data.text ?? "",
    );
 
     } catch (error) {
@@ -140,14 +141,15 @@ export default function CameraPage() {
         return;
       }
 
-      setScanResult(data.result ?? "");
+      setScanResult(data.text ?? "");
 
+      // Title comes from the agent, originalText is the verbatim OCR text.
+      // No manual difficulty: the backend rates the text automatically (LIX).
       await addEntry(
-       "Gescanntes Dokument",
+       data.title || "Gescanntes Dokument",
        "document",
        new Date().toLocaleDateString(),
-       data.result ?? "",
-       "mittel"
+       data.text ?? "",
       );
 
     } catch (error) {
@@ -163,7 +165,7 @@ export default function CameraPage() {
     router.push({
       pathname: "/(tabs)/chatBotPage",
       params: {
-        documentContext: scanResult,
+        scanContext: scanResult,
       },
     });
   }
