@@ -5,12 +5,13 @@ from .agents import translator_agent, simplifier_agent, chat_agent, document_age
 translate_task = Task(
     description=(
         "Translate the following text from {source_lang} to {target_lang}.\n\n"
+        "Return ONLY the translated text.\n"
+        "Do not add explanations.\n"
+        "Do not add notes.\n"
+        "Do not use quotation marks.\n\n"
         "Text:\n{text}"
     ),
-    expected_output=(
-        "Only the translated text in {target_lang}. "
-        "No extra words, no explanations, no quotes."
-    ),
+    expected_output="The translated text.",
     agent=translator_agent,
 )
 
