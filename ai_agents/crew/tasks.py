@@ -54,11 +54,15 @@ chat_task = Task(
 
 scan_task = Task(
     description=(
-        "Analyse the document at {image_path}.\n"
-        "Use OCR tool to extract text and then analyse it. ONLY use the text returned by the OCR Tool. NEVER invent names, dates, addresses or amounts.If information is missing, write 'Not found'. If OCR is unreadable, say so."
+        "The following text was extracted from a scanned document via OCR.\n"
+        "Create a short, descriptive GERMAN title for this document, "
+        "maximum 4 words (e.g. 'Brief vom Jobcenter', 'Rechnung Stadtwerke'). "
+        "Base the title ONLY on the text, never invent information.\n\n"
+        "TEXT START\n{ocr_text}\nTEXT END"
     ),
     expected_output=(
-        "Return structured info: type of text, key data, summary"
+        "Only the short German title, maximum 4 words. "
+        "No quotes, no punctuation, no explanations."
     ),
     agent=document_agent,
 )

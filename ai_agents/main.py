@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel 
 
@@ -10,6 +10,7 @@ from crew.crew import run_chatbot as run_crew_chatbot
 
 from crew.tasks import scan_task
 from crew.agents import document_agent
+from crew.tools import OCRTool
 from crewai import Crew
 
 
@@ -139,22 +140,42 @@ async def scan_document(file: UploadFile = File(...)):
         with open(image_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
-        # Crew AI Execution
-        crew = Crew(
-            agents=[document_agent],
-            tasks=[scan_task],
-            verbose=True
-        )
+        # OCR runs deterministically in code — NOT via LLM tool calling.
+        # llama3.2 skipped the tool or ignored its output too often.
+        ocr_text = OCRTool()._run(image_path)
+        ocr_text = (ocr_text or "").strip()
 
-        result = await crew.kickoff_async(
-            inputs={"image_path": image_path}
-        )
+        if not ocr_text or ocr_text.startswith(("No text detected", "OCR failed", "Image not found")):
+            print("SCAN: no readable text ->", ocr_text)
+            raise HTTPException(
+                status_code=422,
+                detail="Kein Text im Bild erkannt. Bitte näher heranzoomen und für gutes Licht sorgen.",
+            )
 
-        return {"result": str(result)}
+        # The agent's only job: generate a short title from the extracted text.
+        # If that fails, the scan still succeeds with a fallback title.
+        title = "Gescanntes Dokument"
+        try:
+            crew = Crew(
+                agents=[document_agent],
+                tasks=[scan_task],
+                verbose=True
+            )
+            result = await crew.kickoff_async(
+                inputs={"ocr_text": ocr_text}
+            )
+            # Cleanup: first line only, no quotes, sane length
+            generated = str(result).strip().strip('"\'').splitlines()[0].strip()
+            if generated:
+                title = generated[:60]
+        except Exception as e:
+            print("TITLE ERROR:", str(e))
 
+        # "text" is the verbatim OCR result (never touched by the LLM)
+        return {"text": ocr_text, "title": title}
+
+    except HTTPException:
+        raise
     except Exception as e:
         print("ERROR:", str(e))
-        return {
-            "error": str(e),
-            "message": "Fehler beim Dokument-Scan"
-        }
+        raise HTTPException(status_code=500, detail="Fehler beim Dokument-Scan")
