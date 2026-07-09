@@ -7,6 +7,7 @@ type Properties = {
   shape?: 'circle' | 'square';
   size?: 'small' | 'medium' | 'large';
   style?: StyleProp<ViewStyle>;
+  disabled?: boolean;
   onPress?: () => void;
 };
 
@@ -15,6 +16,7 @@ export default function Button({
   shape = 'square',
   size = 'small',
   style,
+  disabled,
   onPress,
 }: Properties) {
   const sizeStyle =
@@ -29,6 +31,7 @@ export default function Button({
         style,
       ]}
       onPress={onPress}
+      disabled={disabled}
       activeOpacity={0.6}
     >
       {children}
