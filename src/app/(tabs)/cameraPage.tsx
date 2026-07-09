@@ -12,12 +12,15 @@ import { COLORS, RADIUS, SPACING } from '../../theme';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
+import { useDocuments } from '../../utils/DataProvider';
+
 
 export default function CameraPage() {
   const cameraRef = useRef<CameraView>(null);
 
   const [permission, requestPermission] = useCameraPermissions();
   const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const { addEntry } = useDocuments();
 
   if (!permission) return <View />;
 
@@ -29,7 +32,16 @@ export default function CameraPage() {
     });
 
     setPhotoUri(photo.uri);
-    console.log('Foto aufgenommen:', photo.uri);
+
+   await addEntry(
+     "Foto",
+     "image",
+     new Date().toLocaleDateString(),
+     photo.uri,
+     "leicht"
+   );
+
+console.log('Foto aufgenommen:', photo.uri);
   }
 
   async function pickImage() {
@@ -54,7 +66,15 @@ export default function CameraPage() {
       const uri = result.assets[0].uri;
       setPhotoUri(uri);
 
-      console.log('Bild ausgewählt:', uri);
+     await addEntry(
+       "Foto",
+       "image",
+       new Date().toLocaleDateString(),
+       uri,
+       "leicht"
+      );
+
+console.log('Bild ausgewählt:', uri);
 
     }
   }
