@@ -311,15 +311,23 @@ export default function DocumentPage() {
               </View>
             ) : (
               <ScrollView showsVerticalScrollIndicator={false}>
-                {viewMode === 'original' ? (
-                  entry.originalText ? (
-                    <Text style={styles.documentText}>{entry.originalText}</Text>
-                  ) : (
-                    <Text style={styles.placeholderText}>
-                      Für dieses Dokument ist kein Text gespeichert.
-                    </Text>
-                  )
-                ) : viewMode === 'einfach' ? (
+             {viewMode === 'original' ? (
+               entry.type === 'image' ? (
+                 <Image
+                   source={{ uri: entry.originalText }}
+                   style={styles.documentImage}
+                   resizeMode="contain"
+                 />
+               ) : entry.originalText ? (
+                 <Text style={styles.documentText}>
+                   {entry.originalText}
+                 </Text>
+               ) : (
+                 <Text style={styles.placeholderText}>
+                   Für dieses Dokument ist kein Text gespeichert.
+                 </Text>
+               )
+) : viewMode === 'einfach' ? (
                   entry.simplifiedText ? (
                     <Text style={styles.documentText}>{entry.simplifiedText}</Text>
                   ) : (
@@ -453,6 +461,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '700',
   },
+
+  documentImage: {
+  width: '100%',
+  height: 400,
+  borderRadius: RADIUS.md,
+},
 
   // Meta row
   metaRow: {

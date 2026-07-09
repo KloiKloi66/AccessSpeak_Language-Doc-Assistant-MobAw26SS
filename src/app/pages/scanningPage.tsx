@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
+import { useDocuments } from '../../utils/DataProvider';
 
 import PageHeader from '../../components/page-header.component';
 import PermissionCard from '../../components/permission-card.component';
@@ -22,6 +23,7 @@ export default function CameraPage() {
   const [permission, requestPermission] = useCameraPermissions();
   const [scanResult, setScanResult] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const { addEntry } = useDocuments();
 
   if (!permission) {
     return <View />;
@@ -72,6 +74,14 @@ export default function CameraPage() {
       }
 
       setScanResult(data.result ?? "");
+
+   await addEntry(
+     "Gescanntes Dokument",
+     "document",
+     new Date().toLocaleDateString(),
+     data.result ?? "",
+     "mittel"
+   );
 
     } catch (error) {
       console.error("SCAN ERROR:", error);
@@ -134,6 +144,14 @@ export default function CameraPage() {
       }
 
       setScanResult(data.result ?? "");
+
+      await addEntry(
+       "Gescanntes Dokument",
+       "document",
+       new Date().toLocaleDateString(),
+       data.result ?? "",
+       "mittel"
+      );
 
     } catch (error) {
       console.error("GALLERY SCAN ERROR:", error);
