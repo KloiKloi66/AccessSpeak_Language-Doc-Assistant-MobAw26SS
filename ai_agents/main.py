@@ -60,6 +60,9 @@ class ChatRequest(BaseModel):
     document_context: str = ""
 
 
+# -------------------------
+# CHAT 
+# -------------------------
 @app.post("/chat")
 def chat(request: ChatRequest):
     print("CHAT REQUEST:", request.message)

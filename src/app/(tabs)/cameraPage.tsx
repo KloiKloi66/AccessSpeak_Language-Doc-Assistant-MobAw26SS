@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import * as ImagePicker from 'expo-image-picker';
+import { router } from 'expo-router';
 
 import PageHeader from '../../components/page-header.component';
 import PermissionCard from '../../components/permission-card.component';
@@ -13,6 +15,7 @@ import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 
 export default function CameraPage() {
   const cameraRef = useRef<CameraView>(null);
+
   const [permission, requestPermission] = useCameraPermissions();
   const [photoUri, setPhotoUri] = useState<string | null>(null);
 
@@ -20,9 +23,45 @@ export default function CameraPage() {
 
   async function takePhoto() {
     if (!cameraRef.current) return;
-    const photo = await cameraRef.current.takePictureAsync({ quality: 1 });
+
+    const photo = await cameraRef.current.takePictureAsync({
+      quality: 1,
+    });
+
     setPhotoUri(photo.uri);
+    console.log('Foto aufgenommen:', photo.uri);
   }
+
+  async function pickImage() {
+    const { status } =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (status !== 'granted') {
+      Alert.alert(
+        'Berechtigung benötigt',
+        'Bitte erlaube den Zugriff auf deine Galerie.'
+      );
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: false,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const uri = result.assets[0].uri;
+      setPhotoUri(uri);
+
+      console.log('Bild ausgewählt:', uri);
+
+    }
+  }
+
+  function openChatbot() {
+  router.push('/(tabs)/chatBotPage');
+ }
 
   return (
     <View style={styles.root}>
@@ -31,21 +70,49 @@ export default function CameraPage() {
       {permission.granted ? (
         <>
           <View style={styles.cameraContainer}>
-            <CameraView ref={cameraRef} style={styles.camera} facing="back" />
+            <CameraView
+              ref={cameraRef}
+              style={styles.camera}
+              facing="back"
+            />
           </View>
 
           <View style={styles.controls}>
-            <Button size="medium" style={styles.sideBtn}>
-              <SimpleLineIcons name="picture" size={22} color={COLORS.text} />
+            <Button
+              size="medium"
+              style={styles.sideBtn}
+              onPress={pickImage}
+            >
+              <SimpleLineIcons
+                name="picture"
+                size={22}
+                color={COLORS.text}
+              />
             </Button>
 
-            <Button size="large" onPress={takePhoto} style={styles.shutterBtn}>
-              <Ionicons name="camera-outline" size={30} color={COLORS.text} />
+            <Button
+              size="large"
+              onPress={takePhoto}
+              style={styles.shutterBtn}
+            >
+              <Ionicons
+                name="camera-outline"
+                size={30}
+                color={COLORS.text}
+              />
             </Button>
 
-            <Button size="medium" style={styles.sideBtn}>
-              <MaterialCommunityIcons name="robot-outline" size={22} color={COLORS.text} />
-            </Button>
+            <Button
+              size="medium"
+              style={styles.sideBtn}
+              onPress={openChatbot}
+            >
+               <MaterialCommunityIcons
+                  name="robot-outline"
+                 size={22}
+                 color={COLORS.text}
+               />
+          </Button>
           </View>
         </>
       ) : (
