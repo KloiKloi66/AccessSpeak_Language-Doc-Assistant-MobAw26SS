@@ -17,6 +17,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS, RADIUS, SPACING } from '../../../theme';
 import { useDocuments } from '../../../utils/DataProvider';
 import { AI_URL } from '../../../utils/backendConfig';
+import Button from '../../../components/button.component';
 
 import * as Speech from 'expo-speech';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -53,7 +54,7 @@ type ViewMode = 'original' | 'einfach' | 'uebersetzt';
 export default function DocumentPage() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { getEntryById, cacheSimplifiedText, cacheTranslation, setDifficulty } = useDocuments();
+  const { getEntryById, cacheSimplifiedText, cacheTranslation, setDifficulty, removeEntryById } = useDocuments();
 
   const [viewMode, setViewMode] = useState<ViewMode>('original');
   const [simplifyError, setSimplifyError] = useState<string | null>(null);
@@ -215,6 +216,19 @@ export default function DocumentPage() {
               <Text style={styles.metaText}>{entry.date}</Text>
             </View>
 
+            <View style={styles.buttonContainerTopRight}>
+              {/* Remove Entry */}
+              <Button 
+                onPress={() => {
+                  removeEntryById(id);
+                  router.back();
+                }}
+                shape="circle"
+                size="small"
+              >
+                <Ionicons name="trash-outline" size={24} color={COLORS.badgeRed} />
+              </Button>
+
             {/* Vorlesen */}
             <TouchableOpacity
               style={[styles.speakBtn, isSpeaking && styles.speakBtnActive]}
@@ -227,7 +241,8 @@ export default function DocumentPage() {
                 size={22}
                 color={COLORS.text}
               />
-            </TouchableOpacity>
+              </TouchableOpacity>
+            </View>
           </View>
 
           {/* ── Original/Einfach toggle ── */}
@@ -492,8 +507,12 @@ const styles = StyleSheet.create({
     color: COLORS.textMuted,
     fontSize: 14,
   },
-  speakBtn: {
+  buttonContainerTopRight: {
+    flexDirection: 'row',
+    gap: SPACING.sm,
     marginLeft: 'auto',
+  },
+  speakBtn: {
     width: 42,
     height: 42,
     borderRadius: RADIUS.pill,
