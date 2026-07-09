@@ -4,6 +4,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
 import { useDocuments } from '../../utils/DataProvider';
+import { AI_URL as API_URL } from '../../utils/backendConfig';
 
 import PageHeader from '../../components/page-header.component';
 import PermissionCard from '../../components/permission-card.component';
@@ -12,10 +13,6 @@ import Button from '../../components/button.component';
 import Feather from '@expo/vector-icons/Feather';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-
-//const API_URL = `http://${devHost}:8001`; // for use with physical device on same network
-//const API_URL = `http://127.0.0.1:8001`;
-const API_URL = `http://10.0.2.2:8001`; // Android Emulator
 
 export default function CameraPage() {
   const cameraRef = useRef<CameraView>(null);
