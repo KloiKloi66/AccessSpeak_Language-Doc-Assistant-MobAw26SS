@@ -1,5 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 import { Tabs } from 'expo-router';
+import { useDocuments } from '../../utils/DataProvider';
+import * as DocumentPicker from "expo-document-picker";
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
@@ -8,6 +10,8 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { COLORS } from '@theme';
 
 export default function TabsLayout() {
+  const { addEntry } = useDocuments();
+
   return (
     <View style={styles.root}>
       <Tabs
@@ -31,14 +35,45 @@ export default function TabsLayout() {
           }}
         />
         <Tabs.Screen
-          name="cameraPage"
+           name="cameraPage"
+          listeners={{
+            tabPress: async (e) => {
+               e.preventDefault();  //verhindert, dass er tatsächlich zur cameraPage navigiert.
+
+              const result = await DocumentPicker.getDocumentAsync({
+                type: [
+                  "application/pdf",
+                  "image/*",
+                ],
+                multiple: false,
+                copyToCacheDirectory: true,
+              });
+
+              if (!result.canceled) {
+                const file = result.assets[0];
+
+                 console.log(file);
+
+                const isImage = file.mimeType?.startsWith("image/");
+                const isPdf = file.mimeType === "application/pdf";
+
+                await addEntry(
+                  file.name,
+                  isImage ? "image" : isPdf ? "pdf" : "unknown",
+                  new Date().toLocaleDateString(),
+                  file.uri,
+                  "leicht"
+                );
+              }
+            },
+          }}
           options={{
-            title: 'Kamera',
+            title: "Upload",
             tabBarIcon: ({ color }) => (
               <Feather name="upload" size={24} color={color} />
-            ),
-          }}
-        />
+             ),
+           }}
+          />
         <Tabs.Screen
           name="historyPage"
           options={{
