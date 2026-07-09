@@ -17,7 +17,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
-const RETURN_AREA_HEIGHT = 130;
+const RETURN_AREA_HEIGHT = 120;
 const ICON_SIZE = 72;
 
 type Step = {
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   transparentReturnArea: {
-    backgroundColor: 'transparent',
+    backgroundColor: 'rgba(26, 25, 41, 0.45)',
     height: RETURN_AREA_HEIGHT,
   },
   sheet: {
