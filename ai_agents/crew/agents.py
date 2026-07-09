@@ -11,6 +11,7 @@ OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.2")
 llama = LLM(
     model=f"ollama/{OLLAMA_MODEL}",
     base_url=OLLAMA_BASE_URL,
+    temperature=0
 )
 
 translator_agent = Agent(
