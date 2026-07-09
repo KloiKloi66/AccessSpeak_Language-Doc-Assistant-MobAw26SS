@@ -20,17 +20,17 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 export default function ChatBotPage() {
   const route = useRoute<any>();
 
-  const documentContext = route.params?.documentContext ?? "";
+  const scanContext = route.params?.scanContext ?? "";
 
   const [message, setMessage] = useState('');
 
   const [messages, setMessages] = useState<any[]>(() => {
-    if (documentContext) {
+    if (scanContext) {
       return [
         {
           id: Date.now().toString(),
           sender: 'bot',
-          text: `Ich habe das gescannte Dokument erhalten. Hier ist die Analyse:\n\n${documentContext}`,
+          text: `Scan Context:\n\n${scanContext}`,
         },
       ];
     }
@@ -59,7 +59,7 @@ export default function ChatBotPage() {
         },
         body: JSON.stringify({
           message: currentMessage,
-          document_context: documentContext,
+          scan_context: scanContext,
         }),
       });
 

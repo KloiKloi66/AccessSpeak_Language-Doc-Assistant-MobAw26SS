@@ -38,7 +38,7 @@ def run_simplification(text: str) -> str:
     result = crew.kickoff(inputs={"text": text})
     return _strip_preamble(str(result))
 
-def run_chatbot(message: str, document_context: str = "") -> str:
+def run_chatbot(message: str, document_context: str = "", scan_context: str = "") -> str:
     crew = Crew(
         agents=[chat_agent],
         tasks=[chat_task],
@@ -48,5 +48,6 @@ def run_chatbot(message: str, document_context: str = "") -> str:
     result = crew.kickoff(inputs={
         "message": message,
         "document_context": document_context,
+        "scan_context": scan_context,
     })
     return str(result)

@@ -57,8 +57,9 @@ chat_agent = Agent(
     ),
     backstory=(
         "You are a helpful assistant that can answer questions about the documents "
-        "registered in the system. When document_context is provided, use it as the "
-        "primary source for document-related questions. You can also answer general "
+        "registered in the system. When scan_context is provided, use it as the primary "
+        "source for document-related questions. If only document_context is provided, use it "
+        "as the primary source for document-related questions. You can also answer general "
         "questions on any other topic. You always reply with a direct answer to the "
         "user's question or message. Avoid unnecessary explanations or information that "
         "does not help the user. If the user asks for further explanations, you can "
