@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -9,7 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useLocalSearchParams } from 'expo-router';
 
 import PageHeader from '../../components/page-header.component';
 import { COLORS, RADIUS, SPACING } from '../../theme';
@@ -18,25 +18,27 @@ import { AI_URL as BACKEND_URL } from '../../utils/backendConfig';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function ChatBotPage() {
-  const route = useRoute<any>();
-
-  const scanContext = route.params?.scanContext ?? "";
+  const params = useLocalSearchParams<{ scanContext?: string }>();
+  const scanContext = typeof params.scanContext === 'string' ? params.scanContext : '';
 
   const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState<any[]>([]);
 
-  const [messages, setMessages] = useState<any[]>(() => {
+  // Tab screens stay mounted, so a lazy useState initializer would only run
+  // on the very first visit. This effect adds the intro message every time
+  // a (new) scan context arrives.
+  useEffect(() => {
     if (scanContext) {
-      return [
+      setMessages(prev => [
+        ...prev,
         {
           id: Date.now().toString(),
           sender: 'bot',
-          text: `Scan Context:\n\n${scanContext}`,
+          text: `Ich habe dein gescanntes Dokument erhalten:\n\n${scanContext}\n\nWas möchtest du dazu wissen?`,
         },
-      ];
+      ]);
     }
-
-    return [];
-  });
+  }, [scanContext]);
 
   const sendMessage = async () => {
     if (!message.trim()) return;
@@ -59,7 +61,7 @@ export default function ChatBotPage() {
         },
         body: JSON.stringify({
           message: currentMessage,
-          scan_context: scanContext,
+          document_context: scanContext,
         }),
       });
 

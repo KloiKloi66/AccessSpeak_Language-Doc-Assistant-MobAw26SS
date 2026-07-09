@@ -165,7 +165,7 @@ export default function CameraPage() {
     router.push({
       pathname: "/(tabs)/chatBotPage",
       params: {
-        documentContext: scanResult,
+        scanContext: scanResult,
       },
     });
   }
