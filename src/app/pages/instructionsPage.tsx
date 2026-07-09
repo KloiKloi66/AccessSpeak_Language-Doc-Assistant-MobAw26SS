@@ -12,6 +12,7 @@ import { router } from 'expo-router';
 import * as Speech from 'expo-speech';
 
 import { COLORS, RADIUS, SPACING } from '../../theme';
+import Button from '../../components/button.component';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
@@ -156,9 +157,14 @@ export default function InstructionsPage() {
         {/* Header: title + X */}
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Anleitung</Text>
-          <TouchableOpacity style={styles.closeBtn} onPress={close} activeOpacity={0.7}>
-            <Ionicons name="close" size={24} color={COLORS.text} />
-          </TouchableOpacity>
+          <Button 
+            style={styles.closeBtn} 
+            onPress={close}
+            shape="circle"
+            size="small"
+          >
+            <Ionicons name="close" size={22} color={COLORS.text} />
+          </Button>
         </View>
 
         {/* Cards */}
@@ -271,12 +277,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   closeBtn: {
-    width: 42,
-    height: 42,
-    borderRadius: RADIUS.pill,
     backgroundColor: COLORS.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 
   // Card
