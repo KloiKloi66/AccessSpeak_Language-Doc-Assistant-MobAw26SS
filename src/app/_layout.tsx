@@ -36,6 +36,8 @@ export default function RootLayout() {
           name="pages/instructionsPage"
           options={{
             animation: 'slide_from_bottom',
+            presentation: 'transparentModal',
+            contentStyle: { backgroundColor: 'transparent' },
             headerShown: false,
           }}
         />
