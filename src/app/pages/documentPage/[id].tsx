@@ -226,22 +226,23 @@ export default function DocumentPage() {
                 shape="circle"
                 size="small"
               >
-                <Ionicons name="trash-outline" size={24} color={COLORS.badgeRed} />
+                <Ionicons name="trash-outline" size={22} color={COLORS.badgeRed} />
               </Button>
 
-            {/* Vorlesen */}
-            <TouchableOpacity
-              style={[styles.speakBtn, isSpeaking && styles.speakBtnActive]}
-              onPress={toggleSpeech}
-              disabled={!visibleText}
-              activeOpacity={0.7}
-            >
-              <Ionicons
-                name={isSpeaking ? 'stop' : 'volume-medium-outline'}
-                size={22}
-                color={COLORS.text}
-              />
-              </TouchableOpacity>
+              {/* Vorlesen */}
+              <Button
+                style={[styles.speakBtn, isSpeaking && styles.speakBtnActive]}
+                onPress={toggleSpeech}
+                shape="circle"
+                size="small"
+                disabled={!visibleText}
+              >
+                <Ionicons
+                  name={isSpeaking ? 'stop' : 'volume-medium-outline'}
+                  size={22}
+                  color={COLORS.text}
+                />
+              </Button>
             </View>
           </View>
 
@@ -513,12 +514,7 @@ const styles = StyleSheet.create({
     marginLeft: 'auto',
   },
   speakBtn: {
-    width: 42,
-    height: 42,
-    borderRadius: RADIUS.pill,
     backgroundColor: COLORS.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   speakBtnActive: {
     backgroundColor: COLORS.accent,
