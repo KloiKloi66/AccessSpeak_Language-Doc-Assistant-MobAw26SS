@@ -37,13 +37,16 @@ simplify_task = Task(
 chat_task = Task(
     description=(
         "Respond to the user message in a helpful and concise way.\n\n"
-        "If the user asks about documents or stored content, use the provided document_context as the primary source of information.\n"
+        "If the user asks about documents or stored content, use the provided document_context as the primary source of information. "
+        "If scan_context is provided, use it as the primary source of information for document-related questions and document_context as secondary source. "
+        "If scan_context is not provided, use the document_context as primary source of information.\n"
+        "Scan context:\n{scan_context}\n\n"
         "Document context:\n{document_context}\n\n"
         "Message:\n{message}"
     ),
     expected_output=(
         "A helpful assistant response in the appropriate language. "
-        "For document-related questions, use the provided document_context and clearly state when information is missing."
+        "For document-related questions, use the provided scan_context and/or document_context and clearly state when information is missing."
     ),
     agent=chat_agent,
 )
