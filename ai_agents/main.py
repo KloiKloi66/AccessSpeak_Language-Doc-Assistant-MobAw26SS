@@ -69,7 +69,8 @@ def chat(request: ChatRequest):
     try:
         answer = run_crew_chatbot(
             message=request.message, 
-            document_context=request.document_context
+            document_context=_get_document_context(),
+            scan_context=request.document_context
         )
         return {"response": answer}
     except Exception as e:
