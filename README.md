@@ -2,17 +2,12 @@
 ---
 
 ### Agents:
-1. Agent
-- scannen
-2. Agent
-- übersetzen
-- vereinfachen
-3. Agent
-- weitere Schritte beschreiben lassen
-- (autofill)
-4. Agent
-- chatbot für fragen zum dokument
-
+| Agents | Usecase | mobile specific function | implemented by |
+| ------ | ------- | ------------------------ | -------------- |
+| Chatbot | With the chatbot agent one is able to ask general questions or questions related to the uploaded or scanned documents. He is also able to give recommendations on how to proceed with the topic of a question or a document. | wip | Florian Hans |
+| Translator | TODO | ? | Oliver Schlieper |
+| Simplifier | TODO | ? | Oliver Schlieper |
+| Scanner | TODO | ? | Vincent Nier |
 
 Figma:
 https://www.figma.com/design/R6o2Ub8vWAbZk5jRNuZTh6/Mobile-Anwendungen-Thema-DokuHelfer?node-id=0-1&p=f&t=CnHn1nP5R2toZOPL-0
