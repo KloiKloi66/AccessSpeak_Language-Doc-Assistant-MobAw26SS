@@ -1,5 +1,6 @@
 # AccessSpeak: Language-Doc-Assistant
 ---
+AccessSpeak is a language doc assistant with the purpose of simplifying and translating documents that are either hard to read or written in a, to the user, foreign language. This application has been developed for mobile devices with the react-native and expo frameworks as part of a module assignment.
 
 ## Agents:
 | Name | Usecase | mobile specific function | implemented by |
