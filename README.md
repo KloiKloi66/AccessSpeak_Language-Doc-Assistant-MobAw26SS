@@ -1,16 +1,19 @@
 # AccessSpeak: Language-Doc-Assistant
 ---
 
-### Agents:
-| Agents | Usecase | mobile specific function | implemented by |
+## Agents:
+| Name | Usecase | mobile specific function | implemented by |
 | ------ | ------- | ------------------------ | -------------- |
 | Chatbot | With the chatbot agent one is able to ask general questions or questions related to the uploaded or scanned documents. He is also able to give recommendations on how to proceed with the topic of a question or a document. | wip | Florian Hans |
 | Translator | TODO | ? | Oliver Schlieper |
 | Simplifier | TODO | ? | Oliver Schlieper |
 | Scanner | TODO | ? | Vincent Nier |
 
-Figma:
-https://www.figma.com/design/R6o2Ub8vWAbZk5jRNuZTh6/Mobile-Anwendungen-Thema-DokuHelfer?node-id=0-1&p=f&t=CnHn1nP5R2toZOPL-0
+## Styling decisions:
+Initially we decided on using a type of glass morphism style for the entire app. But after receiving feedback from not only our fellow students but also other app-testers, we decided to scrap this idea and try a more simple and minimalistic design.
+
+Initial styling and design planning was developed on this [Figma page](https://www.figma.com/design/R6o2Ub8vWAbZk5jRNuZTh6/Mobile-Anwendungen-Thema-DokuHelfer?node-id=0-1&p=f&t=CnHn1nP5R2toZOPL-0).
+
 
 
 ## Repository setup
