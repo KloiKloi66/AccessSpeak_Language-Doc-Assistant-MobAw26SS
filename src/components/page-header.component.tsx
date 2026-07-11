@@ -1,13 +1,13 @@
 import React, { ReactNode } from 'react';
 import { StyleSheet, TextStyle, View } from 'react-native';
-import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 
-import PageTitle from './page-title.component';
-import Button from './button.component';
+import PageTitle from '@components/page-title.component';
+import Button from '@components/button.component';
+import { COLORS, SPACING } from '@theme';
 
 import Entypo from '@expo/vector-icons/Entypo';
-import { COLORS, SPACING } from '@theme';
 
 type Properties = {
   children: ReactNode;

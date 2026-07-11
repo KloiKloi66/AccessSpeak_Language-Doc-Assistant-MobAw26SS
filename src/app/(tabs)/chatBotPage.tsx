@@ -12,8 +12,8 @@ import { useLocalSearchParams } from 'expo-router';
 
 import PageHeader from '@components/page-header.component';
 import Button from '@components/button.component';
-import { COLORS, RADIUS, SPACING } from '@theme';
 import { AI_URL as BACKEND_URL } from '@utils/backendConfig';
+import { COLORS, RADIUS, SPACING } from '@theme';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 

@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import Ionicons from '@expo/vector-icons/Ionicons';
+
 import { COLORS, RADIUS, SPACING } from '@theme';
+
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 type Props = {
   title: string;

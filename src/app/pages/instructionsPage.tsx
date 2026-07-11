@@ -11,8 +11,8 @@ import {
 import { router } from 'expo-router';
 import * as Speech from 'expo-speech';
 
-import { COLORS, RADIUS, SPACING } from '@theme';
 import Button from '@components/button.component';
+import { COLORS, RADIUS, SPACING } from '@theme';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';

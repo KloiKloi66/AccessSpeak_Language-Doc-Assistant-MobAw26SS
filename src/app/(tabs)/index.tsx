@@ -1,11 +1,11 @@
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { Link, router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Link, router } from 'expo-router';
 
 import FunctionsCard from '@components/functions-card.component';
-import { COLORS, RADIUS, SPACING } from '@theme';
-import { useDocuments } from '@utils/DataProvider';
 import Button from '@components/button.component';
+import { useDocuments } from '@utils/DataProvider';
+import { COLORS, RADIUS, SPACING } from '@theme';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';

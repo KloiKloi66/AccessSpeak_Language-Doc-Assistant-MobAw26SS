@@ -11,15 +11,15 @@ import {
   FlatList,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { router, useLocalSearchParams } from 'expo-router';
+import * as Speech from 'expo-speech';
 
-import { COLORS, RADIUS, SPACING } from '@theme';
+import Button from '@components/button.component';
 import { useDocuments } from '@utils/DataProvider';
 import { AI_URL } from '@utils/backendConfig';
-import Button from '@components/button.component';
+import { COLORS, RADIUS, SPACING } from '@theme';
 
-import * as Speech from 'expo-speech';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Entypo from '@expo/vector-icons/Entypo';

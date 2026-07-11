@@ -15,12 +15,13 @@ import {
   Modal,
   FlatList,
 } from 'react-native';
-import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { COLORS, RADIUS, SPACING } from '@theme';
-import { AI_URL as BACKEND_URL } from '@utils/backendConfig';
-
+import { router } from 'expo-router';
 import * as Speech from 'expo-speech';
+
+import { AI_URL as BACKEND_URL } from '@utils/backendConfig';
+import { COLORS, RADIUS, SPACING } from '@theme';
+
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Entypo from '@expo/vector-icons/Entypo';
