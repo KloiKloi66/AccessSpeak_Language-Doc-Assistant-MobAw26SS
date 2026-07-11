@@ -72,14 +72,14 @@ export default function CameraPage() {
 
       setScanResult(data.text ?? "");
 
-   // Title comes from the agent, originalText is the verbatim OCR text.
-   // No manual difficulty: the backend rates the text automatically (LIX).
-   await addEntry(
-     data.title || "Gescanntes Dokument",
-     "document",
-     new Date().toLocaleDateString(),
-     data.text ?? "",
-   );
+      // Title comes from the agent, originalText is the verbatim OCR text.
+      // No manual difficulty: the backend rates the text automatically (LIX).
+      await addEntry(
+        data.title || "Gescanntes Dokument",
+        "document",
+        new Date().toLocaleDateString(),
+        data.text ?? "",
+      );
 
     } catch (error) {
       console.error("SCAN ERROR:", error);
@@ -92,8 +92,7 @@ export default function CameraPage() {
 
   async function pickImage() {
     try {
-      const permission =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
       if (!permission.granted) {
         alert("Bitte erlaube den Zugriff auf die Galerie.");
@@ -146,10 +145,10 @@ export default function CameraPage() {
       // Title comes from the agent, originalText is the verbatim OCR text.
       // No manual difficulty: the backend rates the text automatically (LIX).
       await addEntry(
-       data.title || "Gescanntes Dokument",
-       "document",
-       new Date().toLocaleDateString(),
-       data.text ?? "",
+        data.title || "Gescanntes Dokument",
+        "document",
+        new Date().toLocaleDateString(),
+        data.text ?? "",
       );
 
     } catch (error) {
