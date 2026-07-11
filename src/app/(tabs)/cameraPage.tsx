@@ -32,20 +32,19 @@ export default function CameraPage() {
 
     setPhotoUri(photo.uri);
 
-   await addEntry(
-     "Foto",
-     "image",
-     new Date().toLocaleDateString(),
-     photo.uri,
-     "leicht"
-   );
+    await addEntry(
+      "Foto",
+      "image",
+      new Date().toLocaleDateString(),
+      photo.uri,
+      "leicht"
+    );
 
-console.log('Foto aufgenommen:', photo.uri);
+    console.log('Foto aufgenommen:', photo.uri);
   }
 
   async function pickImage() {
-    const { status } =
-      await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (status !== 'granted') {
       Alert.alert(
@@ -65,22 +64,21 @@ console.log('Foto aufgenommen:', photo.uri);
       const uri = result.assets[0].uri;
       setPhotoUri(uri);
 
-     await addEntry(
-       "Foto",
-       "image",
-       new Date().toLocaleDateString(),
-       uri,
-       "leicht"
+      await addEntry(
+        "Foto",
+        "image",
+        new Date().toLocaleDateString(),
+        uri,
+        "leicht"
       );
 
-console.log('Bild ausgewählt:', uri);
-
+      console.log('Bild ausgewählt:', uri);
     }
   }
 
   function openChatbot() {
-  router.push('/(tabs)/chatBotPage');
- }
+    router.push('/(tabs)/chatBotPage');
+  }
 
   return (
     <View style={styles.root}>
@@ -126,12 +124,12 @@ console.log('Bild ausgewählt:', uri);
               style={styles.sideBtn}
               onPress={openChatbot}
             >
-               <MaterialCommunityIcons
-                  name="robot-outline"
-                 size={22}
-                 color={COLORS.text}
-               />
-          </Button>
+              <MaterialCommunityIcons
+                name="robot-outline"
+                size={22}
+                color={COLORS.text}
+              />
+            </Button>
           </View>
         </>
       ) : (
