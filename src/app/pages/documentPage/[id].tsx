@@ -3,6 +3,7 @@ import {
   View,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
@@ -10,6 +11,8 @@ import {
   Modal,
   FlatList,
   TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -54,7 +57,7 @@ type ViewMode = 'original' | 'einfach' | 'uebersetzt';
 export default function DocumentPage() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { getEntryById, cacheSimplifiedText, cacheTranslation, setDifficulty, removeEntryById } = useDocuments();
+  const { getEntryById, cacheSimplifiedText, cacheTranslation, setDifficulty, removeEntryById, renameEntry } = useDocuments();
 
   const [viewMode, setViewMode] = useState<ViewMode>('original');
   const [simplifyError, setSimplifyError] = useState<string | null>(null);
@@ -62,6 +65,8 @@ export default function DocumentPage() {
   const [targetLang, setTargetLang] = useState<Language | null>(null);
   const [langModalOpen, setLangModalOpen] = useState(false);
   const [diffModalOpen, setDiffModalOpen] = useState(false);
+  const [renameModalOpen, setRenameModalOpen] = useState(false);
+  const [titleDraft, setTitleDraft] = useState('');
   const [loading, setLoading] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
 
@@ -152,6 +157,18 @@ export default function DocumentPage() {
     ensureTranslation(lang);
   }
 
+  function openRename() {
+    if (!entry) return;
+    setTitleDraft(entry.title);
+    setRenameModalOpen(true);
+  }
+
+  function saveRename() {
+    if (!entry || !titleDraft.trim()) return;
+    renameEntry(entry.id, titleDraft);
+    setRenameModalOpen(false);
+  }
+
   async function ensureTranslation(lang: Language) {
     // Cache hit (from DB or earlier this session): nothing to do
     if (!entry || entry.translations[lang.name] || !entry.originalText || loading) return;
@@ -193,6 +210,11 @@ export default function DocumentPage() {
         <Text style={styles.headerTitle} numberOfLines={1}>
           {entry ? entry.title : 'Dokument'}
         </Text>
+        {entry && (
+          <TouchableOpacity style={styles.editBtn} onPress={openRename} activeOpacity={0.7}>
+            <Ionicons name="pencil-outline" size={18} color={COLORS.textMuted} />
+          </TouchableOpacity>
+        )}
       </View>
 
       {entry ? (
@@ -364,6 +386,59 @@ export default function DocumentPage() {
         </View>
       )}
 
+      {/* ── Rename modal ── */}
+      <Modal
+        visible={renameModalOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setRenameModalOpen(false)}
+      >
+        <TouchableWithoutFeedback onPress={() => setRenameModalOpen(false)}>
+          <KeyboardAvoidingView
+            style={styles.modalOverlay}
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          >
+            <TouchableWithoutFeedback>
+              <View style={styles.modalSheet}>
+                <Text style={styles.modalTitle}>Dokument umbenennen</Text>
+                <TextInput
+                  style={styles.renameInput}
+                  value={titleDraft}
+                  onChangeText={setTitleDraft}
+                  placeholder="Name des Dokuments"
+                  placeholderTextColor={COLORS.textMuted}
+                  maxLength={80}
+                  autoFocus
+                  returnKeyType="done"
+                  onSubmitEditing={saveRename}
+                />
+                <View style={styles.renameActions}>
+                  <TouchableOpacity
+                    style={styles.renameBtn}
+                    onPress={() => setRenameModalOpen(false)}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={styles.renameBtnText}>Abbrechen</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[
+                      styles.renameBtn,
+                      styles.renameBtnPrimary,
+                      !titleDraft.trim() && styles.renameBtnDisabled,
+                    ]}
+                    onPress={saveRename}
+                    disabled={!titleDraft.trim()}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={styles.renameBtnText}>Speichern</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
+          </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
+      </Modal>
+
       {/* ── Difficulty selection modal ── */}
       <Modal
         visible={diffModalOpen}
@@ -473,6 +548,48 @@ const styles = StyleSheet.create({
     color: COLORS.text,
     fontSize: 24,
     fontWeight: '700',
+  },
+  editBtn: {
+    width: 34,
+    height: 34,
+    borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  // Rename modal
+  renameInput: {
+    height: 52,
+    backgroundColor: COLORS.surfaceLight,
+    borderRadius: RADIUS.md,
+    paddingHorizontal: SPACING.md,
+    color: COLORS.text,
+    fontSize: 17,
+    marginBottom: SPACING.md,
+  },
+  renameActions: {
+    flexDirection: 'row',
+    gap: SPACING.sm,
+  },
+  renameBtn: {
+    flex: 1,
+    height: 48,
+    borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.surfaceLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  renameBtnPrimary: {
+    backgroundColor: COLORS.accent,
+  },
+  renameBtnDisabled: {
+    opacity: 0.4,
+  },
+  renameBtnText: {
+    color: COLORS.text,
+    fontSize: 16,
+    fontWeight: '600',
   },
 
   documentImage: {
