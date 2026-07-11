@@ -17,19 +17,29 @@ Initial styling and design planning was developed on this [Figma page](https://w
 
 
 
-## Repository setup
+## Local repository setup
 
-#### Pre-requirements
-- Node
-- Python
+### Pre-requisites:
+- Node (^24.0.0)
+- Python (~3.9.0)
 - uv
 - Docker (Desktop)
+```
+Version differences may lead to unexpected behavior.
+```
 
-#### Setup and running the project
+### Setup and run the project:
 
-1. Run ```npm install```
-2. Depending on where the app is launched:
-    - change ```API_URL``` in ```\src\utils\Dataprovider.tsx```
-3. Run ```docker compose up --build``` to start MongoDB
-4. Run ```npm run start``` to start the project
-5. Scan QR-Code with phone or press ```a``` to launch in emulator
+1. Install all node module by running 
+    ```
+    npm install
+    ```
+2. Build and serve all Docker-Images by running 
+    ```
+    docker compose up --build
+    ```
+3. Start the application by running 
+    ```
+    npm run start
+    ```
+4. Scan QR-Code with phone (in same network) or press ```a``` to launch in emulator
