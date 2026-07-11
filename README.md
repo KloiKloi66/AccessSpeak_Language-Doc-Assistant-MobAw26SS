@@ -2,6 +2,7 @@
 ---
 AccessSpeak is a language doc assistant with the purpose of simplifying and translating documents that are either hard to read or written in a, to the user, foreign language. This application has been developed for mobile devices with the react-native and expo frameworks as part of a module assignment.
 
+---
 ## Agents:
 | Name | Usecase | mobile specific function | implemented by |
 | ------ | ------- | ------------------------ | -------------- |
@@ -10,13 +11,13 @@ AccessSpeak is a language doc assistant with the purpose of simplifying and tran
 | Simplifier | TODO | ? | Oliver Schlieper |
 | Scanner | TODO | ? | Vincent Nier |
 
+---
 ## Styling decisions:
 Initially we decided on using a type of glass morphism style for the entire app. But after receiving feedback from not only our fellow students but also other app-testers, we decided to scrap this idea and try a more simple and minimalistic design.
 
 Initial styling and design planning was developed on this [Figma page](https://www.figma.com/design/R6o2Ub8vWAbZk5jRNuZTh6/Mobile-Anwendungen-Thema-DokuHelfer?node-id=0-1&p=f&t=CnHn1nP5R2toZOPL-0).
 
-
-
+---
 ## Local repository setup
 
 ### Pre-requisites:
@@ -43,3 +44,41 @@ Version differences may lead to unexpected behavior.
     npm run start
     ```
 4. Scan QR-Code with phone (in same network) or press ```a``` to launch in emulator
+
+---
+## Received Feedback 
+### By Group Petwatch/PawPilot:
+```
+Positiv
+- Gute Struktur
+- Aufteilung und Ordnung sehr gut
+- Kontrastreich, barrierefrei
+- übersichtlich
+- intuitiv
+- Farblich angenehm
+- Simples und benutzerfreundliches Design
+
+Negativ
+- Bei Kamerazugriff aktivieren ist der Text abgeschnitten
+- Es gibt beim Scan Ergebnis keine Möglichkeit runterzuscrollen
+- Beim Chatbot gibt es kein Symbol ob es lädt 
+- Konnte das Bild nicht übersetzen, nur angegeben in welchem Ordner es ist (Deutsch-Türkisch)
+- Kameraleuchte leuchtet auch außerhalb der nutzung grün auf
+- Übersetzen ist fehlgeschlagen
+
+Verbesserungsvorschläge
+- Beim Scan wäre ein Symbol hilfreich um zu erkennen dass Text erkannt wird
+- Sendebutton vielleicht nur aktiv lassen wenn man den button auch nutzen kann
+- Beim Senden könnte das Textfeld von selber runtergehen beim Chatbot
+- eine Message damit man versteht dass das Bild gespeichert wird
+```
+
+### By Group ?
+```
+- icon zum hochladen springt grad zur kamera, grad unintuitiv aber ihr habt ja es ja schon auf nem branch geändert
+- ⁠zurück button springt immer zum home -> bisschen unnötig, da man von der nav bar aus auch zu home kommen kann
+- ⁠chatbot funktioniert gut
+- ⁠UI auch gut
+- ⁠beim chatbot wäre es cool wenn man die tastatur verstecken kann damit man den ganzen chat dann sieht
+- ⁠anleitung super idee und auch easy gestaltet
+```
