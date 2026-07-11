@@ -87,42 +87,44 @@ export default function ChatBotPage() {
     >
       <PageHeader>Chatbot</PageHeader>
 
-      <FlatList
-        data={messages}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.messageList}
-        renderItem={({ item }) => (
-          <View
-            style={[
-              styles.bubble,
-              item.sender === 'user' ? styles.userBubble : styles.botBubble,
-            ]}
-          >
-            <Text
+      <View style={styles.chatContainer}>
+        <FlatList
+          data={messages}
+          keyExtractor={item => item.id}
+          contentContainerStyle={styles.messageList}
+          renderItem={({ item }) => (
+            <View
               style={[
-                styles.bubbleText,
-                item.sender === 'user' ? styles.userText : styles.botText,
+                styles.bubble,
+                item.sender === 'user' ? styles.userBubble : styles.botBubble,
               ]}
             >
-              {item.text}
-            </Text>
-          </View>
-        )}
-      />
-
-      <View style={styles.inputRow}>
-        <TextInput
-          value={message}
-          onChangeText={setMessage}
-          placeholder="Texteingabe"
-          placeholderTextColor={COLORS.textMuted}
-          style={styles.input}
-          returnKeyType="send"
-          onSubmitEditing={sendMessage}
+              <Text
+                style={[
+                  styles.bubbleText,
+                  item.sender === 'user' ? styles.userText : styles.botText,
+                ]}
+              >
+                {item.text}
+              </Text>
+            </View>
+          )}
         />
-        <TouchableOpacity style={styles.sendBtn} onPress={sendMessage} activeOpacity={0.7}>
-          <Ionicons name="arrow-forward" size={22} color={COLORS.text} />
-        </TouchableOpacity>
+
+        <View style={styles.inputRow}>
+          <TextInput
+            value={message}
+            onChangeText={setMessage}
+            placeholder="Texteingabe"
+            placeholderTextColor={COLORS.textMuted}
+            style={styles.input}
+            returnKeyType="send"
+            onSubmitEditing={sendMessage}
+          />
+          <TouchableOpacity style={styles.sendBtn} onPress={sendMessage} activeOpacity={0.7}>
+            <Ionicons name="arrow-forward" size={22} color={COLORS.text} />
+          </TouchableOpacity>
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -132,8 +134,11 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: COLORS.background,
-    paddingHorizontal: SPACING.lg,
     paddingBottom: SPACING.md,
+  },
+  chatContainer: {
+    flex: 1,
+    paddingHorizontal: SPACING.lg,
   },
   messageList: {
     flexGrow: 1,
