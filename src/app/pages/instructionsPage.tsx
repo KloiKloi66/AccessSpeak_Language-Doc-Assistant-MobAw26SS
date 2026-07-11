@@ -11,8 +11,8 @@ import {
 import { router } from 'expo-router';
 import * as Speech from 'expo-speech';
 
-import { COLORS, RADIUS, SPACING } from '../../theme';
-import Button from '../../components/button.component';
+import { COLORS, RADIUS, SPACING } from '@theme';
+import Button from '@components/button.component';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
@@ -81,7 +81,7 @@ const STEPS: Step[] = [
     text: 'Diese App hilft dir, Texte zu verstehen. Wische nach links, um mehr zu sehen.',
     icon: (
       <Image
-        source={require('../../../assets/app_logo.png')}
+        source={require('@assets/app_logo.png')}
         style={{ width: 96, height: 96, borderRadius: RADIUS.lg }}
         resizeMode="contain"
       />

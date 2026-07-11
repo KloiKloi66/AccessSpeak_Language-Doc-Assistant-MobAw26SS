@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { StyleSheet, StyleProp, TouchableOpacity, ViewStyle } from 'react-native';
-import { COLORS, RADIUS } from '../theme';
+import { COLORS, RADIUS } from '@theme';
 
 type Properties = {
   children: ReactNode;

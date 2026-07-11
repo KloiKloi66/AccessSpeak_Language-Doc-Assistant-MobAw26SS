@@ -17,8 +17,8 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { COLORS, RADIUS, SPACING } from '../../theme';
-import { AI_URL as BACKEND_URL } from '../../utils/backendConfig';
+import { COLORS, RADIUS, SPACING } from '@theme';
+import { AI_URL as BACKEND_URL } from '@utils/backendConfig';
 
 import * as Speech from 'expo-speech';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -37,12 +37,12 @@ const LANG_CODE: Record<string, string> = {
 };
 
 const LANGUAGES: Language[] = [
-  { name: 'Deutsch',      flag: require('../../../assets/flags/deutsch.png') },
-  { name: 'Englisch',     flag: require('../../../assets/flags/englisch.png') },
-  { name: 'Französisch',  flag: require('../../../assets/flags/franzoesisch.png') },
-  { name: 'Italienisch',  flag: require('../../../assets/flags/italienisch.png') },
-  { name: 'Spanisch',     flag: require('../../../assets/flags/spanisch.png') },
-  { name: 'Türkisch',     flag: require('../../../assets/flags/tuerkisch.png') },
+  { name: 'Deutsch',      flag: require('@assets/flags/deutsch.png') },
+  { name: 'Englisch',     flag: require('@assets/flags/englisch.png') },
+  { name: 'Französisch',  flag: require('@assets/flags/franzoesisch.png') },
+  { name: 'Italienisch',  flag: require('@assets/flags/italienisch.png') },
+  { name: 'Spanisch',     flag: require('@assets/flags/spanisch.png') },
+  { name: 'Türkisch',     flag: require('@assets/flags/tuerkisch.png') },
 ];
 
 type Mode = 'translate' | 'simplify';

@@ -4,15 +4,15 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
 
-import PageHeader from '../../components/page-header.component';
-import PermissionCard from '../../components/permission-card.component';
-import Button from '../../components/button.component';
-import { COLORS, RADIUS, SPACING } from '../../theme';
+import PageHeader from '@components/page-header.component';
+import PermissionCard from '@components/permission-card.component';
+import Button from '@components/button.component';
+import { COLORS, RADIUS, SPACING } from '@theme';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
-import { useDocuments } from '../../utils/DataProvider';
+import { useDocuments } from '@utils/DataProvider';
 
 
 export default function CameraPage() {

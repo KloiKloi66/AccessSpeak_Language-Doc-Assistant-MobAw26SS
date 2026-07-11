@@ -3,12 +3,12 @@ import { View, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
-import { useDocuments } from '../../utils/DataProvider';
-import { AI_URL as API_URL } from '../../utils/backendConfig';
+import { useDocuments } from '@utils/DataProvider';
+import { AI_URL as API_URL } from '@utils/backendConfig';
 
-import PageHeader from '../../components/page-header.component';
-import PermissionCard from '../../components/permission-card.component';
-import Button from '../../components/button.component';
+import PageHeader from '@components/page-header.component';
+import PermissionCard from '@components/permission-card.component';
+import Button from '@components/button.component';
 
 import Feather from '@expo/vector-icons/Feather';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';

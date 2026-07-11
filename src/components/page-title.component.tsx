@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { StyleSheet, Text, TextStyle } from 'react-native';
-import { COLORS } from '../theme';
+import { COLORS } from '@theme';
 
 type Properties = {
   children: ReactNode;

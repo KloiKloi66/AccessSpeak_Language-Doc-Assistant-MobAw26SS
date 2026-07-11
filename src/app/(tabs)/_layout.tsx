@@ -5,7 +5,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
-import { COLORS } from '../../theme';
+import { COLORS } from '@theme';
 
 export default function TabsLayout() {
   return (

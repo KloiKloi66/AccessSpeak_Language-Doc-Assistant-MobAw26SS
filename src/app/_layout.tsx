@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { AppState } from 'react-native';
 import * as NavigationBar from 'expo-navigation-bar';
 
-import { DataProvider } from '../utils/DataProvider';
+import { DataProvider } from '@utils/DataProvider';
 
 export default function RootLayout() {
   useEffect(() => {

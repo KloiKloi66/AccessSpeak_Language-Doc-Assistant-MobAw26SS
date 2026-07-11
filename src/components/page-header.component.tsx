@@ -7,7 +7,7 @@ import PageTitle from './page-title.component';
 import Button from './button.component';
 
 import Entypo from '@expo/vector-icons/Entypo';
-import { COLORS, SPACING } from '../theme';
+import { COLORS, SPACING } from '@theme';
 
 type Properties = {
   children: ReactNode;
