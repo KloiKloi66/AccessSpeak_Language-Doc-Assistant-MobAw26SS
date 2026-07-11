@@ -47,7 +47,7 @@ Version differences may lead to unexpected behavior.
 
 ---
 ## Received Feedback 
-### By Group Petwatch/PawPilot:
+### By Group *App_06_PetWatch / PawPilot*:
 ```
 Positiv
 - Gute Struktur
@@ -73,7 +73,7 @@ Verbesserungsvorschläge
 - eine Message damit man versteht dass das Bild gespeichert wird
 ```
 
-### By Group ?
+### By Group *App_09_01_AccessAway*
 ```
 - icon zum hochladen springt grad zur kamera, grad unintuitiv aber ihr habt ja es ja schon auf nem branch geändert
 - ⁠zurück button springt immer zum home -> bisschen unnötig, da man von der nav bar aus auch zu home kommen kann
