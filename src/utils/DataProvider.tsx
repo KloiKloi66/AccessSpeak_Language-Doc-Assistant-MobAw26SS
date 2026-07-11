@@ -21,6 +21,7 @@ type DataContextType = {
   cacheSimplifiedText: (id: number, text: string) => Promise<void>;
   cacheTranslation: (id: number, language: string, text: string) => Promise<void>;
   setDifficulty: (id: number, difficulty: string) => Promise<void>;
+  renameEntry: (id: number, title: string) => Promise<void>;
 };
 
 const DataContext = createContext<DataContextType | null>(null);
@@ -140,6 +141,17 @@ export function DataProvider({children}: {children: React.ReactNode}) {
     );
   };
 
+  const renameEntry = async (id: number, title: string) => {
+    const trimmed = title.trim();
+    if (!trimmed) return;
+
+    await patchEntry(
+      id,
+      { title: trimmed },
+      (entry) => ({ ...entry, title: trimmed })
+    );
+  };
+
   return (
     <DataContext.Provider
       value={{
@@ -150,6 +162,7 @@ export function DataProvider({children}: {children: React.ReactNode}) {
         cacheSimplifiedText,
         cacheTranslation,
         setDifficulty,
+        renameEntry,
       }}
     >
       {children}
