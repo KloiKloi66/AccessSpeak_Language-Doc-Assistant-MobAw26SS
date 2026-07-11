@@ -72,6 +72,14 @@ def create_entry(entry: dict):
 def update_entry(entry_id: int, update: dict):
   update_fields = {}
 
+  # Rename: title must not be empty (a document without a name would be
+  # impossible to find in the history), length capped at 80 characters
+  if "title" in update:
+      title = str(update["title"]).strip()
+      if not title:
+          raise HTTPException(status_code=400, detail="Title must not be empty")
+      update_fields["title"] = title[:80]
+
   # Manual difficulty override — always stored as "manual" so the
   # automatic (LIX) rating never touches it again
   if "difficulty" in update:
