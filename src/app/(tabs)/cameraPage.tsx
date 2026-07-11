@@ -4,16 +4,15 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
 
-import PageHeader from '../../components/page-header.component';
-import PermissionCard from '../../components/permission-card.component';
-import Button from '../../components/button.component';
-import { COLORS, RADIUS, SPACING } from '../../theme';
+import PageHeader from '@components/page-header.component';
+import PermissionCard from '@components/permission-card.component';
+import Button from '@components/button.component';
+import { useDocuments } from '@utils/DataProvider';
+import { COLORS, RADIUS, SPACING } from '@theme';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
-import { useDocuments } from '../../utils/DataProvider';
-
 
 export default function CameraPage() {
   const cameraRef = useRef<CameraView>(null);
@@ -33,20 +32,19 @@ export default function CameraPage() {
 
     setPhotoUri(photo.uri);
 
-   await addEntry(
-     "Foto",
-     "image",
-     new Date().toLocaleDateString(),
-     photo.uri,
-     "leicht"
-   );
+    await addEntry(
+      "Foto",
+      "image",
+      new Date().toLocaleDateString(),
+      photo.uri,
+      "leicht"
+    );
 
-console.log('Foto aufgenommen:', photo.uri);
+    console.log('Foto aufgenommen:', photo.uri);
   }
 
   async function pickImage() {
-    const { status } =
-      await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (status !== 'granted') {
       Alert.alert(
@@ -66,22 +64,21 @@ console.log('Foto aufgenommen:', photo.uri);
       const uri = result.assets[0].uri;
       setPhotoUri(uri);
 
-     await addEntry(
-       "Foto",
-       "image",
-       new Date().toLocaleDateString(),
-       uri,
-       "leicht"
+      await addEntry(
+        "Foto",
+        "image",
+        new Date().toLocaleDateString(),
+        uri,
+        "leicht"
       );
 
-console.log('Bild ausgewählt:', uri);
-
+      console.log('Bild ausgewählt:', uri);
     }
   }
 
   function openChatbot() {
-  router.push('/(tabs)/chatBotPage');
- }
+    router.push('/(tabs)/chatBotPage');
+  }
 
   return (
     <View style={styles.root}>
@@ -127,12 +124,12 @@ console.log('Bild ausgewählt:', uri);
               style={styles.sideBtn}
               onPress={openChatbot}
             >
-               <MaterialCommunityIcons
-                  name="robot-outline"
-                 size={22}
-                 color={COLORS.text}
-               />
-          </Button>
+              <MaterialCommunityIcons
+                name="robot-outline"
+                size={22}
+                color={COLORS.text}
+              />
+            </Button>
           </View>
         </>
       ) : (

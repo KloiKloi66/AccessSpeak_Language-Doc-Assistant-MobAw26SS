@@ -3,12 +3,12 @@ import { View, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
-import { useDocuments } from '../../utils/DataProvider';
-import { AI_URL as API_URL } from '../../utils/backendConfig';
 
-import PageHeader from '../../components/page-header.component';
-import PermissionCard from '../../components/permission-card.component';
-import Button from '../../components/button.component';
+import PageHeader from '@components/page-header.component';
+import PermissionCard from '@components/permission-card.component';
+import Button from '@components/button.component';
+import { useDocuments } from '@utils/DataProvider';
+import { AI_URL as API_URL } from '@utils/backendConfig';
 
 import Feather from '@expo/vector-icons/Feather';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
@@ -72,14 +72,14 @@ export default function CameraPage() {
 
       setScanResult(data.text ?? "");
 
-   // Title comes from the agent, originalText is the verbatim OCR text.
-   // No manual difficulty: the backend rates the text automatically (LIX).
-   await addEntry(
-     data.title || "Gescanntes Dokument",
-     "document",
-     new Date().toLocaleDateString(),
-     data.text ?? "",
-   );
+      // Title comes from the agent, originalText is the verbatim OCR text.
+      // No manual difficulty: the backend rates the text automatically (LIX).
+      await addEntry(
+        data.title || "Gescanntes Dokument",
+        "document",
+        new Date().toLocaleDateString(),
+        data.text ?? "",
+      );
 
     } catch (error) {
       console.error("SCAN ERROR:", error);
@@ -92,8 +92,7 @@ export default function CameraPage() {
 
   async function pickImage() {
     try {
-      const permission =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
       if (!permission.granted) {
         alert("Bitte erlaube den Zugriff auf die Galerie.");
@@ -146,10 +145,10 @@ export default function CameraPage() {
       // Title comes from the agent, originalText is the verbatim OCR text.
       // No manual difficulty: the backend rates the text automatically (LIX).
       await addEntry(
-       data.title || "Gescanntes Dokument",
-       "document",
-       new Date().toLocaleDateString(),
-       data.text ?? "",
+        data.title || "Gescanntes Dokument",
+        "document",
+        new Date().toLocaleDateString(),
+        data.text ?? "",
       );
 
     } catch (error) {

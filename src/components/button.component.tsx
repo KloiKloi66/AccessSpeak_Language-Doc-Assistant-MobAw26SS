@@ -1,12 +1,14 @@
 import React, { ReactNode } from 'react';
 import { StyleSheet, StyleProp, TouchableOpacity, ViewStyle } from 'react-native';
-import { COLORS, RADIUS } from '../theme';
+
+import { COLORS, RADIUS } from '@theme';
 
 type Properties = {
   children: ReactNode;
   shape?: 'circle' | 'square';
   size?: 'small' | 'medium' | 'large';
   style?: StyleProp<ViewStyle>;
+  disabled?: boolean;
   onPress?: () => void;
 };
 
@@ -15,6 +17,7 @@ export default function Button({
   shape = 'square',
   size = 'small',
   style,
+  disabled,
   onPress,
 }: Properties) {
   const sizeStyle =
@@ -29,6 +32,7 @@ export default function Button({
         style,
       ]}
       onPress={onPress}
+      disabled={disabled}
       activeOpacity={0.6}
     >
       {children}

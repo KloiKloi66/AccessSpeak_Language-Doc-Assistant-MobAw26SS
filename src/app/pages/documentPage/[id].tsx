@@ -11,15 +11,15 @@ import {
   FlatList,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-import { COLORS, RADIUS, SPACING } from '../../../theme';
-import { useDocuments } from '../../../utils/DataProvider';
-import { AI_URL } from '../../../utils/backendConfig';
-import Button from '../../../components/button.component';
-
+import { router, useLocalSearchParams } from 'expo-router';
 import * as Speech from 'expo-speech';
+
+import Button from '@components/button.component';
+import { useDocuments } from '@utils/DataProvider';
+import { AI_URL } from '@utils/backendConfig';
+import { COLORS, RADIUS, SPACING } from '@theme';
+
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Entypo from '@expo/vector-icons/Entypo';
@@ -36,11 +36,11 @@ const LANG_CODE: Record<string, string> = {
 
 // Target languages for translation (documents are German, so no Deutsch here)
 const LANGUAGES: Language[] = [
-  { name: 'Englisch',     flag: require('../../../../assets/temp/englisch.png') },
-  { name: 'Französisch',  flag: require('../../../../assets/temp/franzoesisch.png') },
-  { name: 'Italienisch',  flag: require('../../../../assets/temp/italienisch.png') },
-  { name: 'Spanisch',     flag: require('../../../../assets/temp/spanisch.png') },
-  { name: 'Türkisch',     flag: require('../../../../assets/temp/tuerkisch.png') },
+  { name: 'Englisch',     flag: require('@assets/flags/englisch.png') },
+  { name: 'Französisch',  flag: require('@assets/flags/franzoesisch.png') },
+  { name: 'Italienisch',  flag: require('@assets/flags/italienisch.png') },
+  { name: 'Spanisch',     flag: require('@assets/flags/spanisch.png') },
+  { name: 'Türkisch',     flag: require('@assets/flags/tuerkisch.png') },
 ];
 
 const BADGE_COLORS: Record<string, { text: string; bg: string }> = {
@@ -226,22 +226,23 @@ export default function DocumentPage() {
                 shape="circle"
                 size="small"
               >
-                <Ionicons name="trash-outline" size={24} color={COLORS.badgeRed} />
+                <Ionicons name="trash-outline" size={22} color={COLORS.badgeRed} />
               </Button>
 
-            {/* Vorlesen */}
-            <TouchableOpacity
-              style={[styles.speakBtn, isSpeaking && styles.speakBtnActive]}
-              onPress={toggleSpeech}
-              disabled={!visibleText}
-              activeOpacity={0.7}
-            >
-              <Ionicons
-                name={isSpeaking ? 'stop' : 'volume-medium-outline'}
-                size={22}
-                color={COLORS.text}
-              />
-              </TouchableOpacity>
+              {/* Vorlesen */}
+              <Button
+                style={[styles.speakBtn, isSpeaking && styles.speakBtnActive]}
+                onPress={toggleSpeech}
+                shape="circle"
+                size="small"
+                disabled={!visibleText}
+              >
+                <Ionicons
+                  name={isSpeaking ? 'stop' : 'volume-medium-outline'}
+                  size={22}
+                  color={COLORS.text}
+                />
+              </Button>
             </View>
           </View>
 
@@ -513,12 +514,7 @@ const styles = StyleSheet.create({
     marginLeft: 'auto',
   },
   speakBtn: {
-    width: 42,
-    height: 42,
-    borderRadius: RADIUS.pill,
     backgroundColor: COLORS.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   speakBtnActive: {
     backgroundColor: COLORS.accent,

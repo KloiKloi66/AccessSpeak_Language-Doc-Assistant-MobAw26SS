@@ -1,9 +1,9 @@
-import { Stack } from 'expo-router';
 import { useEffect } from 'react';
 import { AppState } from 'react-native';
+import { Stack } from 'expo-router';
 import * as NavigationBar from 'expo-navigation-bar';
 
-import { DataProvider } from '../utils/DataProvider';
+import { DataProvider } from '@utils/DataProvider';
 
 export default function RootLayout() {
   useEffect(() => {

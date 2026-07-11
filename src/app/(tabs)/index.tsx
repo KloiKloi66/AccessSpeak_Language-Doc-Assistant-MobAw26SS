@@ -1,14 +1,15 @@
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { Link, router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Link, router } from 'expo-router';
 
-import FunctionsCard from '../../components/functions-card.component';
-import { COLORS, RADIUS, SPACING } from '../../theme';
+import FunctionsCard from '@components/functions-card.component';
+import Button from '@components/button.component';
+import { useDocuments } from '@utils/DataProvider';
+import { COLORS, RADIUS, SPACING } from '@theme';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { useDocuments } from '../../utils/DataProvider';
 
 const BADGE_COLORS: Record<string, { text: string; bg: string }> = {
   schwierig: { text: COLORS.badgeRed, bg: COLORS.badgeRedBg },
@@ -30,9 +31,13 @@ export default function HomePage() {
           </View>
           <Text style={styles.username}>Oliver</Text>
         </View>
-        <TouchableOpacity style={styles.bellBtn} activeOpacity={0.7}>
+        <Button 
+          style={styles.bellBtn}
+          shape="circle"
+          size="small"
+        >
           <Ionicons name="notifications-outline" size={22} color={COLORS.text} />
-        </TouchableOpacity>
+        </Button>
       </View>
 
       {/* App Anleitung */}
@@ -154,12 +159,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   bellBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: RADIUS.pill,
     backgroundColor: COLORS.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 
   // Instruction button

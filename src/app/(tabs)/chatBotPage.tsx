@@ -5,15 +5,15 @@ import {
   TextInput,
   Text,
   FlatList,
-  TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 
-import PageHeader from '../../components/page-header.component';
-import { COLORS, RADIUS, SPACING } from '../../theme';
-import { AI_URL as BACKEND_URL } from '../../utils/backendConfig';
+import PageHeader from '@components/page-header.component';
+import Button from '@components/button.component';
+import { AI_URL as BACKEND_URL } from '@utils/backendConfig';
+import { COLORS, RADIUS, SPACING } from '@theme';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 
@@ -121,9 +121,14 @@ export default function ChatBotPage() {
             returnKeyType="send"
             onSubmitEditing={sendMessage}
           />
-          <TouchableOpacity style={styles.sendBtn} onPress={sendMessage} activeOpacity={0.7}>
+          <Button 
+            style={styles.sendBtn} 
+            onPress={sendMessage}
+            shape="circle"
+            size="medium"
+          >
             <Ionicons name="arrow-forward" size={22} color={COLORS.text} />
-          </TouchableOpacity>
+          </Button>
         </View>
       </View>
     </KeyboardAvoidingView>
@@ -189,11 +194,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   sendBtn: {
-    width: 52,
-    height: 52,
-    borderRadius: RADIUS.pill,
     backgroundColor: COLORS.accent,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });

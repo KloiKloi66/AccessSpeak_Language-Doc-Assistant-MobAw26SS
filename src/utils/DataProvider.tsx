@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { API_URL } from "./backendConfig";
+import { API_URL } from "@utils/backendConfig";
 
 type Entry = {
   title: string;
