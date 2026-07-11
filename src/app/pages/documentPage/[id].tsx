@@ -36,11 +36,11 @@ const LANG_CODE: Record<string, string> = {
 
 // Target languages for translation (documents are German, so no Deutsch here)
 const LANGUAGES: Language[] = [
-  { name: 'Englisch',     flag: require('../../../../assets/temp/englisch.png') },
-  { name: 'Französisch',  flag: require('../../../../assets/temp/franzoesisch.png') },
-  { name: 'Italienisch',  flag: require('../../../../assets/temp/italienisch.png') },
-  { name: 'Spanisch',     flag: require('../../../../assets/temp/spanisch.png') },
-  { name: 'Türkisch',     flag: require('../../../../assets/temp/tuerkisch.png') },
+  { name: 'Englisch',     flag: require('../../../../assets/flags/englisch.png') },
+  { name: 'Französisch',  flag: require('../../../../assets/flags/franzoesisch.png') },
+  { name: 'Italienisch',  flag: require('../../../../assets/flags/italienisch.png') },
+  { name: 'Spanisch',     flag: require('../../../../assets/flags/spanisch.png') },
+  { name: 'Türkisch',     flag: require('../../../../assets/flags/tuerkisch.png') },
 ];
 
 const BADGE_COLORS: Record<string, { text: string; bg: string }> = {

@@ -37,12 +37,12 @@ const LANG_CODE: Record<string, string> = {
 };
 
 const LANGUAGES: Language[] = [
-  { name: 'Deutsch',      flag: require('../../../assets/temp/deutsch.png') },
-  { name: 'Englisch',     flag: require('../../../assets/temp/englisch.png') },
-  { name: 'Französisch',  flag: require('../../../assets/temp/franzoesisch.png') },
-  { name: 'Italienisch',  flag: require('../../../assets/temp/italienisch.png') },
-  { name: 'Spanisch',     flag: require('../../../assets/temp/spanisch.png') },
-  { name: 'Türkisch',     flag: require('../../../assets/temp/tuerkisch.png') },
+  { name: 'Deutsch',      flag: require('../../../assets/flags/deutsch.png') },
+  { name: 'Englisch',     flag: require('../../../assets/flags/englisch.png') },
+  { name: 'Französisch',  flag: require('../../../assets/flags/franzoesisch.png') },
+  { name: 'Italienisch',  flag: require('../../../assets/flags/italienisch.png') },
+  { name: 'Spanisch',     flag: require('../../../assets/flags/spanisch.png') },
+  { name: 'Türkisch',     flag: require('../../../assets/flags/tuerkisch.png') },
 ];
 
 type Mode = 'translate' | 'simplify';
