@@ -3,7 +3,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Link, router } from 'expo-router';
 
 import FunctionsCard from '@components/functions-card.component';
-import Button from '@components/button.component';
 import { useDocuments } from '@utils/DataProvider';
 import { COLORS, RADIUS, SPACING } from '@theme';
 
@@ -23,23 +22,6 @@ export default function HomePage() {
 
   return (
     <View style={[styles.root, { paddingTop: insets.top + 8 }]}>
-      {/* Profile row */}
-      <View style={styles.profileRow}>
-        <View style={styles.profileLeft}>
-          <View style={styles.avatar}>
-            <Ionicons name="person-outline" size={22} color={COLORS.textMuted} />
-          </View>
-          <Text style={styles.username}>Oliver</Text>
-        </View>
-        <Button 
-          style={styles.bellBtn}
-          shape="circle"
-          size="small"
-        >
-          <Ionicons name="notifications-outline" size={22} color={COLORS.text} />
-        </Button>
-      </View>
-
       {/* App Anleitung */}
       <Link href={{ pathname: '/pages/instructionsPage' }} asChild>
         <TouchableOpacity style={styles.instructionBtn} activeOpacity={0.7}>
@@ -131,35 +113,6 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
     paddingHorizontal: SPACING.lg,
     paddingBottom: SPACING.sm,
-  },
-
-  // Profile
-  profileRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: SPACING.md,
-  },
-  profileLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  avatar: {
-    width: 44,
-    height: 44,
-    borderRadius: RADIUS.pill,
-    backgroundColor: COLORS.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  username: {
-    color: COLORS.text,
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  bellBtn: {
-    backgroundColor: COLORS.surface,
   },
 
   // Instruction button
