@@ -1,9 +1,20 @@
 import { useEffect } from 'react';
 import { AppState } from 'react-native';
 import { Stack } from 'expo-router';
+import { ThemeProvider, DarkTheme } from '@react-navigation/native';
 import * as NavigationBar from 'expo-navigation-bar';
 
 import { DataProvider } from '@utils/DataProvider';
+import { COLORS } from '@theme';
+
+const AppTheme = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    background: COLORS.background,
+    card: COLORS.background,
+  },
+};
 
 export default function RootLayout() {
   useEffect(() => {
@@ -25,10 +36,11 @@ export default function RootLayout() {
 
   return (
     <DataProvider>
+      <ThemeProvider value={AppTheme}>
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: '#1A1929' },
+          contentStyle: { backgroundColor: COLORS.background },
         }}
       >
         <Stack.Screen name="(tabs)" />
@@ -56,6 +68,7 @@ export default function RootLayout() {
           }}
         />
       </Stack>
+      </ThemeProvider>
     </DataProvider>
   );
 }
