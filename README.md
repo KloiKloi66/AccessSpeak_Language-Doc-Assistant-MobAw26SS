@@ -6,10 +6,10 @@ AccessSpeak is a language doc assistant with the purpose of simplifying and tran
 ## Agents:
 | Name | Usecase | mobile specific function | implemented by |
 | ------ | ------- | ------------------------ | -------------- |
-| Chatbot | With the chatbot agent one is able to ask general questions or questions related to the uploaded or scanned documents. He is also able to give recommendations on how to proceed with the topic of a question or a document. | wip | Florian Hans |
-| Translator | With the Translation Agent the user is able to write or paste texts into a textbox and choose from a handful of languages to translate the text into. | Text To Speech enables the user to optionally receive translations in a potentially for the user more easily understandable way. | Oliver Schlieper |
+| Chatbot | With the chatbot agent one is able to ask general questions or questions related to the uploaded or scanned documents. He is also able to give recommendations on how to proceed with the topic of a question or a document. | The chatbot uses the phones *microphone* for **Speech To Text**. With which it can detect the user's voice and convert it into a prompt for the chatbot. | Florian Hans |
+| Translator | With the Translation Agent the user is able to write or paste texts into a textbox and choose from a handful of languages to translate the text into. | **Text To Speech** enables the functionality of documents *beeing read out loud by the app* for the user to optionally receive translations in a potentially for the user more easily understandable way. | Oliver Schlieper |
 | Simplifier | The Simplifier Agent allows the user to make complicated texts and documents simpler and more easily comprehendible, the user simply scans the document he wishes to simplify, selects the document in the document history and selects the simpify option. | ? | Oliver Schlieper |
-| Scanner | Originally used in tandem with tesseract to extract texts from documents, the Scanning Agent is now seperate from the extraction of the text from documents. The agent now receives the extracted document text and chosses a fitting title for the extracted documents. | The Scanner makes use of the camera of the phone to extract the text and further process the data in the document. | Vincent Nier |
+| Scanner | Originally used in tandem with tesseract to extract texts from documents, the Scanning Agent is now seperate from the extraction of the text from documents. The agent now receives the extracted document text and chosses a fitting title for the extracted documents. | The Scanner makes use of the **camera** of the phone to extract the text and further process the data in the document. | Vincent Nier |
 
 ---
 ## Styling decisions:
