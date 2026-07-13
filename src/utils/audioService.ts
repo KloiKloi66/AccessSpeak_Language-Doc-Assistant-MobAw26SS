@@ -46,6 +46,7 @@ export async function stopRecording() {
     }
 
     console.log("Audio URI:", uri);
+    console.log("Aufnahme beendet");
 
     return uri;
 }
