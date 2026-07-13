@@ -13,6 +13,8 @@ import { useLocalSearchParams } from 'expo-router';
 import PageHeader from '@components/page-header.component';
 import Button from '@components/button.component';
 import { AI_URL as BACKEND_URL } from '@utils/backendConfig';
+import { startRecording, stopRecording } from '@/src/utils/audioService';
+import { useDocuments } from '@utils/DataProvider';
 import { COLORS, RADIUS, SPACING } from '@theme';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -21,8 +23,11 @@ export default function ChatBotPage() {
   const params = useLocalSearchParams<{ scanContext?: string }>();
   const scanContext = typeof params.scanContext === 'string' ? params.scanContext : '';
 
+  const { transcribeSpeech } = useDocuments();
+
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<any[]>([]);
+  const [isRecording, setIsRecording] = useState(false);
 
   // Tab screens stay mounted, so a lazy useState initializer would only run
   // on the very first visit. This effect adds the intro message every time
@@ -40,18 +45,22 @@ export default function ChatBotPage() {
     }
   }, [scanContext]);
 
-  const sendMessage = async () => {
-    if (!message.trim()) return;
+  const sendMessage = async (input?: string) => {
+    const currentMessage = input ?? message;
+
+    if (!currentMessage.trim()) return;
 
     const userMessage = {
       id: Date.now().toString(),
       sender: 'user',
-      text: message,
+      text: currentMessage,
     };
 
     setMessages(prev => [...prev, userMessage]);
-    const currentMessage = message;
-    setMessage('');
+
+    if (!input){
+      setMessage('');
+    }
 
     try {
       const response = await fetch(`${BACKEND_URL}/chat`, {
@@ -77,6 +86,21 @@ export default function ChatBotPage() {
     } catch (error) {
       console.log('FEHLER:', error);
     }
+  };
+
+  const handleVoiceInput = async () => {
+    if (!isRecording) {
+      await startRecording();
+      setIsRecording(true);
+      return;
+    }
+
+    const uri = await stopRecording();
+    setIsRecording(false);
+
+    const result = await transcribeSpeech(uri);
+
+    await sendMessage(result.text);
   };
 
   return (
@@ -119,11 +143,23 @@ export default function ChatBotPage() {
             placeholderTextColor={COLORS.textMuted}
             style={styles.input}
             returnKeyType="send"
-            onSubmitEditing={sendMessage}
+            onSubmitEditing={() => sendMessage()}
           />
           <Button 
             style={styles.sendBtn} 
-            onPress={sendMessage}
+            onPress={handleVoiceInput}
+            shape="circle"
+            size="medium"
+          >
+            <Ionicons 
+              name={isRecording ? "stop" : "mic"} 
+              size={22} 
+              color={COLORS.text} 
+            />
+          </Button>
+          <Button 
+            style={styles.sendBtn} 
+            onPress={() => sendMessage()}
             shape="circle"
             size="medium"
           >

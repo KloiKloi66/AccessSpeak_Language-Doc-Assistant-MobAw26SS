@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { API_URL } from "@utils/backendConfig";
+import { API_URL, AI_URL } from "@utils/backendConfig";
 
 type Entry = {
   title: string;
@@ -22,6 +22,7 @@ type DataContextType = {
   cacheTranslation: (id: number, language: string, text: string) => Promise<void>;
   setDifficulty: (id: number, difficulty: string) => Promise<void>;
   renameEntry: (id: number, title: string) => Promise<void>;
+  transcribeSpeech: (uri: string) => Promise<{ text: string }>;
 };
 
 const DataContext = createContext<DataContextType | null>(null);
@@ -151,6 +152,24 @@ export function DataProvider({children}: {children: React.ReactNode}) {
       (entry) => ({ ...entry, title: trimmed })
     );
   };
+  
+  // Speech-to-text
+  const transcribeSpeech = async (uri: string) => {
+    const formData = new FormData();
+
+    formData.append("file", {
+      uri,
+      name: "speech.m4a",
+      type: "audio/m4a",
+    } as any);
+
+    const response = await fetch(`${AI_URL}/transcribe`, {
+      method: "POST",
+      body: formData,
+    });
+
+    return await response.json();
+  };
 
   return (
     <DataContext.Provider
@@ -163,6 +182,7 @@ export function DataProvider({children}: {children: React.ReactNode}) {
         cacheTranslation,
         setDifficulty,
         renameEntry,
+        transcribeSpeech,
       }}
     >
       {children}
