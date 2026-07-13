@@ -15,3 +15,7 @@ crewai-tools
 # OCR dependencies
 pytesseract
 Pillow
+
+# Speech to text
+faster-whisper
+python-multipart

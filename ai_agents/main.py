@@ -1,6 +1,7 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel 
+from whisper_speech_to_text import transcribe_audio
 
 import os
 import requests
@@ -179,3 +180,26 @@ async def scan_document(file: UploadFile = File(...)):
     except Exception as e:
         print("ERROR:", str(e))
         raise HTTPException(status_code=500, detail="Fehler beim Dokument-Scan")
+
+
+# Speech-To-Text
+
+UPLOAD_DIR = "uploads"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+@app.post("/transcribe")
+async def transcribe(file: UploadFile = File(...)):
+
+    print("Datei:", file.filename)
+    print("Content-Type:", file.content_type)
+
+    path = f"{UPLOAD_DIR}/{file.filename}"
+
+    with open(path, "wb") as f:
+        f.write(await file.read())
+
+    text = transcribe_audio(path)
+
+    return {
+        "text": text
+    }
