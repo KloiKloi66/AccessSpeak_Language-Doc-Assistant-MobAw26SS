@@ -90,6 +90,14 @@ Verbesserungsvorschläge
 ### Florian Hans
 
 ### Oliver Schlieper
+Design-Phase:
+Zu Beginn des Projekts habe ich mich vor allem im Bereich Design eingebracht. Da ich mit Figma bereits gut vertraut war, habe ich an den Wireframes mitgearbeitet und die High-Fidelity-Mockups eigenständig erstellt, ebenso stammte die grundsätzliche Designrichtung von mir. Eine wichtige Erkenntnis kam erst nach der Zwischenpräsentation: Mein persönlicher Geschmack, etwa eine moderne Liquid-Glass-Optik, war für unsere Zielgruppe nicht das Richtige. Menschen mit Leseschwäche oder geringen Deutschkenntnissen brauchen hohe Kontraste, große Bedienelemente und klare Strukturen und keine gestalterischen Spielereien. Diese Umstellung von dem, was mir persönlich gefällt, hin zu dem, was den Nutzern tatsächlich hilft, war für mich die wertvollste Lektion der Konzeptphase.
+
+Implementierung:
+In der Umsetzung habe ich unter anderem die App-Anleitung in Einfacher Sprache mit Vorlesefunktion, die Dokumentseite mit Vereinfachen- und Übersetzen-Ansicht sowie die automatische Schwierigkeitseinstufung entwickelt. Dabei habe ich viel gelernt, insbesondere den Umgang mit lokalen KI-Modellen und vor allem deren Grenzen: Unser kleines Modell erfand teilweise Ergebnisse oder ignorierte Tool-Aufrufe, weshalb wir die Texterkennung bewusst deterministisch im Code ausführen und die KI ausschließlich für Sprachaufgaben einsetzen. Außerdem habe ich Docker und seine Vorteile für einheitliche Teamumgebungen kennengelernt, meine FastAPI-Kenntnisse vertieft und ein deutlich besseres Verständnis von MongoDB entwickelt, etwa beim gezielten Aktualisieren einzelner Felder. Auch mein Umgang mit React Native ist spürbar sicherer geworden. Am meisten gelernt habe ich jedoch im Umgang mit GitHub: Branches, Merges und Rebases gezielt einzusetzen, um mit mehreren Entwicklern parallel an einem Projekt zu arbeiten, sowie Änderungen in kleine, nachvollziehbare Commits aufzuteilen.
+
+Was nicht rundlief:
+Nicht alles lief dabei reibungslos. Anfangs fiel es mir schwer, sinnvolle Issues zu formulieren und den Überblick zu behalten, was in welcher Reihenfolge erledigt werden musste, unser Taskboard wurde erst mit der Zeit wirklich hilfreich. Auch die KI-Agenten hatte ich zunächst so eingebunden, dass sie gar nicht über CrewAI liefen, das fiel erst durch Feedback aus dem Team auf und musste nachträglich umgebaut werden. Und als ich meine Änderungen in die von Florian aufgesetzte Datenbank integrieren wollte, hatte ich Mühe, seine Struktur vollständig nachzuvollziehen, hier hätte ich früher nachfragen sollen, anstatt lange allein zu suchen. Genau das nehme ich mit: früher kommunizieren, kleiner arbeiten und die Bedürfnisse der Nutzer konsequent über die eigenen Vorlieben stellen.
 
 ### Vincent Nier
 
