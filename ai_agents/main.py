@@ -13,6 +13,7 @@ from crew.tasks import scan_task
 from crew.agents import document_agent
 from crew.tools import OCRTool
 from crewai import Crew
+import fitz  # PyMuPDF (für PDS scan)
 
 
 ENTRY_API_URL = os.getenv("ENTRY_API_URL", "http://localhost:8000/entries")
@@ -180,6 +181,31 @@ async def scan_document(file: UploadFile = File(...)):
     except Exception as e:
         print("ERROR:", str(e))
         raise HTTPException(status_code=500, detail="Fehler beim Dokument-Scan")
+    
+@app.post("/pdf-scan")
+async def pdf_scan(file: UploadFile = File(...)):
+    try:
+        pdf_bytes = await file.read()
+
+        doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+
+        text = ""
+        for page in doc:
+            text += page.get_text()
+
+        doc.close()
+
+        return {
+            "title": file.filename.replace(".pdf", ""),
+            "text": text
+        }
+
+    except Exception as e:
+        print("PDF ERROR:", str(e))
+        raise HTTPException(
+            status_code=500,
+            detail="Fehler beim PDF-Auslesen"
+        )
 
 
 # Speech-To-Text

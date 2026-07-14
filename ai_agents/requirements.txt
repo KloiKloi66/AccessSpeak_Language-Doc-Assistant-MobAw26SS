@@ -19,3 +19,6 @@ Pillow
 # Speech to text
 faster-whisper
 python-multipart
+
+# PDF extraction
+pymupdf

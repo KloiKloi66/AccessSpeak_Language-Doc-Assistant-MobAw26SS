@@ -2,6 +2,7 @@ import { StyleSheet, View } from 'react-native';
 import { Tabs } from 'expo-router';
 import { useDocuments } from '../../utils/DataProvider';
 import * as DocumentPicker from "expo-document-picker";
+import { AI_URL } from "@utils/backendConfig";
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
@@ -57,13 +58,37 @@ export default function TabsLayout() {
                 const isImage = file.mimeType?.startsWith("image/");
                 const isPdf = file.mimeType === "application/pdf";
 
-                await addEntry(
-                  file.name,
-                  isImage ? "image" : isPdf ? "pdf" : "unknown",
-                  new Date().toLocaleDateString(),
-                  file.uri,
-                  "leicht"
-                );
+if (isImage) {
+  await addEntry(
+    file.name,
+    "image",
+    new Date().toLocaleDateString(),
+    file.uri,
+    "leicht"
+  );
+} else if (isPdf) {
+  const formData = new FormData();
+
+  formData.append("file", {
+    uri: file.uri,
+    name: file.name,
+    type: "application/pdf",
+  } as any);
+
+const response = await fetch(`${AI_URL}/pdf-scan`, {
+  method: "POST",
+  body: formData,
+});
+
+const data = await response.json();
+
+await addEntry(
+  data.title,
+  "document",
+  new Date().toLocaleDateString(),
+  data.text
+);
+}
               }
             },
           }}
