@@ -57,7 +57,7 @@ type ViewMode = 'original' | 'einfach' | 'uebersetzt';
 export default function DocumentPage() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { getEntryById, cacheSimplifiedText, cacheTranslation, setDifficulty, removeEntryById, renameEntry } = useDocuments();
+  const { getEntryById, cacheSimplifiedText, cacheTranslation, setDifficulty, removeEntryById, renameEntry,  convertImageToDocument } = useDocuments();
 
   const [viewMode, setViewMode] = useState<ViewMode>('original');
   const [simplifyError, setSimplifyError] = useState<string | null>(null);
@@ -69,6 +69,7 @@ export default function DocumentPage() {
   const [titleDraft, setTitleDraft] = useState('');
   const [loading, setLoading] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [scanLoading, setScanLoading] = useState(false);
 
   const entry = getEntryById(id ?? '');
   const badge = BADGE_COLORS[entry?.difficulty ?? ''] ?? BADGE_COLORS.mittel;
@@ -200,6 +201,44 @@ export default function DocumentPage() {
     }
   }
 
+  async function scanImage() {
+  if (!entry || entry.type !== "image") return;
+
+  try {
+    setScanLoading(true);
+
+    const formData = new FormData();
+
+    formData.append("file", {
+      uri: entry.originalText,
+      name: "document.jpg",
+      type: "image/jpeg",
+    } as any);
+
+    const response = await fetch(`${AI_URL}/scan`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.log(data);
+      return;
+    }
+
+    await convertImageToDocument(
+      entry.id,
+      data.title || entry.title,
+      data.text
+    );
+  } catch (e) {
+    console.log(e);
+  } finally {
+    setScanLoading(false);
+  }
+}
+
   return (
     <View style={[styles.root, { paddingTop: insets.top + 8 }]}>
       {/* ── Header ── */}
@@ -267,6 +306,24 @@ export default function DocumentPage() {
               </Button>
             </View>
           </View>
+
+          {entry.type === "image" && (
+         <Button
+           onPress={scanImage}
+           size="medium"
+           style={styles.scanButton}
+         >
+           <MaterialCommunityIcons
+             name="text-recognition"
+             size={22}
+             color={COLORS.text}
+           />
+           <Text style={styles.scanButtonText}>
+             Text erkennen
+           </Text>
+         </Button>
+
+         )}
 
           {/* ── Original/Einfach toggle ── */}
           <View style={styles.viewToggle}>
@@ -515,6 +572,21 @@ export default function DocumentPage() {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
+
+
+      {scanLoading && (
+  <View style={styles.loadingOverlay}>
+    <ActivityIndicator size="large" color={COLORS.text} />
+
+    <Text style={styles.loadingTitle}>
+      Dokument wird verarbeitet...
+    </Text>
+
+    <Text style={styles.loadingSubtitle}>
+      Das kann einen Moment dauern.
+    </Text>
+  </View>
+)}
     </View>
   );
 }
@@ -636,6 +708,28 @@ const styles = StyleSheet.create({
   speakBtnActive: {
     backgroundColor: COLORS.accent,
   },
+
+scanButton: {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "center",
+
+  width: "100%",
+  height: 52,
+
+  gap: SPACING.sm,
+
+  backgroundColor: COLORS.surface,
+  borderRadius: RADIUS.pill,
+
+  marginBottom: SPACING.sm,
+},
+
+scanButtonText: {
+  color: COLORS.text,
+  fontSize: 16,
+  fontWeight: "600",
+},
 
   // View toggle
   viewToggle: {
@@ -762,4 +856,25 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
+  loadingOverlay: {
+  ...StyleSheet.absoluteFillObject,
+  backgroundColor: "rgba(0,0,0,0.6)",
+  justifyContent: "center",
+  alignItems: "center",
+  zIndex: 999,
+},
+
+loadingTitle: {
+  marginTop: SPACING.lg,
+  color: COLORS.text,
+  fontSize: 20,
+  fontWeight: "700",
+},
+
+loadingSubtitle: {
+  marginTop: SPACING.sm,
+  color: COLORS.textMuted,
+  fontSize: 15,
+},
+
 });
