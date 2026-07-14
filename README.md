@@ -88,6 +88,14 @@ Verbesserungsvorschläge
 ### Personal reflection by team members:
 
 ### Florian Hans
+Das Projekt startete mit der Konzeptionsphase, in der ich mich hauptsächlich mit der allgemeinen Produktbeschreibung und der Architektur der App beschäftigte. Dabei habe ich mir überlegt, welche Funktionalitäten die App für unsere Zielgruppe haben sollte und wie wir diese Funktionalitäten am besten umsetzen könnten.
+Im Ganzen lief die Konzeptionsphase meines Erachtens sehr gut abgesehen von dem im Folgenden beschriebenen Punkt, da wir hier als Gruppe die Aufgaben fair verteilt haben, bei der jedes Gruppenmitglied seinen Teil zuverlässig bearbeitet hat und wir es am Ende gut zusammentragen konnten. Unsere Ergebnisse hatten wir dann besprochen und uns auf manche Änderungen zügig einigen können. Das einzig Negative in der Konzeptionsphase war, dass unser viertes Gruppenmitglied leider gar keinen Beitrag geleistet hat und sich von dem Projekt entfernt hat. Trotz der Umstände sind wir dennoch zu einem guten ersten Entwurf gekommen.
+
+In der Entwicklungsphase des Projekts beschäftigte ich mich vorerst allein daran den Rahmen für die App zu entwickeln. Dabei entwarf ich als erstes eine Repository-Verzeichnisstruktur, die besagt, wo welche Dateien hingehören. Dafür habe ich unter anderem auch den Einstiegsort in die root-Seite der App per Konﬁguration angepasst, damit ich meine Struktur umsetzen konnte. Mit der nun fertig erstellten Ordner-Struktur für das Repository erstellte ich dann den Rohbau für einen Großteil aller Screens, die für unser frühes Design der App notwendig waren. Nachdem das Grundgerüst der App stand, habe ich mich um die MongoDB-Datenbank gekümmert, dafür die API erstellt und gleichzeitig diese in eine neu angelegte Docker-Konﬁguration eingepﬂegt. Der nächste große Teil, den ich bearbeitet hatte, war der Chatbot als Agent, der Zugriff auf die Dokument-Einträge in der Datenbank hat. Zusätzlich fügte ich noch die Funktionalität mit ein per Speech-to-Text Prompts für den Chatbot über eine Audioaufnahme zu erzeugen. Gegen Ende des Projekts beschäftigte ich mich dann hauptsächlich noch mit der Aufbereitung der Dokumentation und räumte den Code ein wenig auf.
+
+Rückblickend würde ich sagen, dass diese Phase zwar etwas holprig begonnen hat, da ich zu Beginn eher das Gefühl hatte, einen Großteil der Projektarbeit allein zu übernehmen. Dies lag daran, dass teilweise Deadlines, die wir uns gesetzt hatten, nicht von allen Gruppenmitgliedern eingehalten wurden. Glücklicherweise besserte sich dies nach Rücksprache mit dem Team im Laufe der Bearbeitungszeit. Insgesamt bin ich mit dem Verlauf und Ergebnis des Projekts zufrieden.
+
+Für die Zukunft nehme ich mir mit, dass ich bei einem ähnlichen Projekt frühzeitig fest deﬁnierte Deadlines setzen würde, um mögliche Verzögerungen früher zu erkennen und eine transparentere Arbeitsverteilung zu ermöglichen.
 
 ### Oliver Schlieper
 Design-Phase:
