@@ -202,42 +202,42 @@ export default function DocumentPage() {
   }
 
   async function scanImage() {
-  if (!entry || entry.type !== "image") return;
+    if (!entry || entry.type !== "image") return;
 
-  try {
-    setScanLoading(true);
+    try {
+      setScanLoading(true);
 
-    const formData = new FormData();
+      const formData = new FormData();
 
-    formData.append("file", {
-      uri: entry.originalText,
-      name: "document.jpg",
-      type: "image/jpeg",
-    } as any);
+      formData.append("file", {
+        uri: entry.originalText,
+        name: "document.jpg",
+        type: "image/jpeg",
+      } as any);
 
-    const response = await fetch(`${AI_URL}/scan`, {
-      method: "POST",
-      body: formData,
-    });
+      const response = await fetch(`${AI_URL}/scan`, {
+        method: "POST",
+        body: formData,
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (!response.ok) {
-      console.log(data);
-      return;
+      if (!response.ok) {
+        console.log(data);
+        return;
+      }
+
+      await convertImageToDocument(
+        entry.id,
+        data.title || entry.title,
+        data.text
+      );
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setScanLoading(false);
     }
-
-    await convertImageToDocument(
-      entry.id,
-      data.title || entry.title,
-      data.text
-    );
-  } catch (e) {
-    console.log(e);
-  } finally {
-    setScanLoading(false);
   }
-}
 
   return (
     <View style={[styles.root, { paddingTop: insets.top + 8 }]}>
@@ -308,22 +308,21 @@ export default function DocumentPage() {
           </View>
 
           {entry.type === "image" && (
-         <Button
-           onPress={scanImage}
-           size="medium"
-           style={styles.scanButton}
-         >
-           <MaterialCommunityIcons
-             name="text-recognition"
-             size={22}
-             color={COLORS.text}
-           />
-           <Text style={styles.scanButtonText}>
-             Text erkennen
-           </Text>
-         </Button>
-
-         )}
+            <Button
+              onPress={scanImage}
+              size="medium"
+              style={styles.scanButton}
+            >
+              <MaterialCommunityIcons
+                name="text-recognition"
+                size={22}
+                color={COLORS.text}
+              />
+              <Text style={styles.scanButtonText}>
+                Text erkennen
+              </Text>
+            </Button>
+          )}
 
           {/* ── Original/Einfach toggle ── */}
           <View style={styles.viewToggle}>
@@ -403,36 +402,36 @@ export default function DocumentPage() {
               </View>
             ) : (
               <ScrollView showsVerticalScrollIndicator={false}>
-             {viewMode === 'original' ? (
-               entry.type === 'image' ? (
-                 <Image
-                   source={{ uri: entry.originalText }}
-                   style={styles.documentImage}
-                   resizeMode="contain"
-                 />
-               ) : entry.originalText ? (
-                 <Text style={styles.documentText}>
-                   {entry.originalText}
-                 </Text>
-               ) : (
-                 <Text style={styles.placeholderText}>
-                   Für dieses Dokument ist kein Text gespeichert.
-                 </Text>
-               )
-) : viewMode === 'einfach' ? (
-                  entry.simplifiedText ? (
-                    <Text style={styles.documentText}>{entry.simplifiedText}</Text>
+                {viewMode === 'original' ? (
+                  entry.type === 'image' ? (
+                    <Image
+                      source={{ uri: entry.originalText }}
+                      style={styles.documentImage}
+                      resizeMode="contain"
+                    />
+                  ) : entry.originalText ? (
+                    <Text style={styles.documentText}>
+                      {entry.originalText}
+                    </Text>
                   ) : (
-                    <Text style={styles.placeholderText}>{simplifyError ?? ''}</Text>
+                    <Text style={styles.placeholderText}>
+                      Für dieses Dokument ist kein Text gespeichert.
+                    </Text>
                   )
-                ) : targetLang && entry.translations[targetLang.name] ? (
-                  <Text style={styles.documentText}>{entry.translations[targetLang.name]}</Text>
-                ) : (
-                  <Text style={styles.placeholderText}>
-                    {translateError ?? 'Wähle eine Sprache.'}
-                  </Text>
-                )}
-              </ScrollView>
+                  ) : viewMode === 'einfach' ? (
+                    entry.simplifiedText ? (
+                      <Text style={styles.documentText}>{entry.simplifiedText}</Text>
+                    ) : (
+                      <Text style={styles.placeholderText}>{simplifyError ?? ''}</Text>
+                    )
+                  ) : targetLang && entry.translations[targetLang.name] ? (
+                    <Text style={styles.documentText}>{entry.translations[targetLang.name]}</Text>
+                  ) : (
+                    <Text style={styles.placeholderText}>
+                      {translateError ?? 'Wähle eine Sprache.'}
+                    </Text>
+                  )}
+                </ScrollView>
             )}
           </View>
         </>
@@ -575,18 +574,18 @@ export default function DocumentPage() {
 
 
       {scanLoading && (
-  <View style={styles.loadingOverlay}>
-    <ActivityIndicator size="large" color={COLORS.text} />
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color={COLORS.text} />
 
-    <Text style={styles.loadingTitle}>
-      Dokument wird verarbeitet...
-    </Text>
+          <Text style={styles.loadingTitle}>
+            Dokument wird verarbeitet...
+          </Text>
 
-    <Text style={styles.loadingSubtitle}>
-      Das kann einen Moment dauern.
-    </Text>
-  </View>
-)}
+          <Text style={styles.loadingSubtitle}>
+            Das kann einen Moment dauern.
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -665,10 +664,10 @@ const styles = StyleSheet.create({
   },
 
   documentImage: {
-  width: '100%',
-  height: 400,
-  borderRadius: RADIUS.md,
-},
+    width: '100%',
+    height: 400,
+    borderRadius: RADIUS.md,
+  },
 
   // Meta row
   metaRow: {
@@ -709,27 +708,27 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.accent,
   },
 
-scanButton: {
-  flexDirection: "row",
-  alignItems: "center",
-  justifyContent: "center",
+  scanButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
 
-  width: "100%",
-  height: 52,
+    width: "100%",
+    height: 52,
 
-  gap: SPACING.sm,
+    gap: SPACING.sm,
 
-  backgroundColor: COLORS.surface,
-  borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.pill,
 
-  marginBottom: SPACING.sm,
-},
+    marginBottom: SPACING.sm,
+  },
 
-scanButtonText: {
-  color: COLORS.text,
-  fontSize: 16,
-  fontWeight: "600",
-},
+  scanButtonText: {
+    color: COLORS.text,
+    fontSize: 16,
+    fontWeight: "600",
+  },
 
   // View toggle
   viewToggle: {
@@ -857,24 +856,24 @@ scanButtonText: {
     fontWeight: '500',
   },
   loadingOverlay: {
-  ...StyleSheet.absoluteFillObject,
-  backgroundColor: "rgba(0,0,0,0.6)",
-  justifyContent: "center",
-  alignItems: "center",
-  zIndex: 999,
-},
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 999,
+  },
 
-loadingTitle: {
-  marginTop: SPACING.lg,
-  color: COLORS.text,
-  fontSize: 20,
-  fontWeight: "700",
-},
+  loadingTitle: {
+    marginTop: SPACING.lg,
+    color: COLORS.text,
+    fontSize: 20,
+    fontWeight: "700",
+  },
 
-loadingSubtitle: {
-  marginTop: SPACING.sm,
-  color: COLORS.textMuted,
-  fontSize: 15,
-},
+  loadingSubtitle: {
+    marginTop: SPACING.sm,
+    color: COLORS.textMuted,
+    fontSize: 15,
+  },
 
 });

@@ -155,25 +155,25 @@ export function DataProvider({children}: {children: React.ReactNode}) {
   };
 
   const convertImageToDocument = async (
-  id: number,
-  title: string,
-  text: string
- ) => {
-  await patchEntry(
-    id,
-    {
-      title,
-      type: "document",
-      originalText: text,
-    },
-    (entry) => ({
-      ...entry,
-      title,
-      type: "document",
-      originalText: text,
-     })
-   );
- };
+    id: number,
+    title: string,
+    text: string
+  ) => {
+    await patchEntry(
+      id,
+      {
+        title,
+        type: "document",
+        originalText: text,
+      },
+      (entry) => ({
+        ...entry,
+        title,
+        type: "document",
+        originalText: text,
+      })
+    );
+  };
   
   // Speech-to-text
   const transcribeSpeech = async (uri: string) => {
