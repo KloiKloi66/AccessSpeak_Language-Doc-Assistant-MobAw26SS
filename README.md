@@ -47,6 +47,63 @@ Version differences may lead to unexpected behavior.
 4. Scan QR-Code with phone (in same network) or press ```a``` to launch in emulator
 
 ---
+
+## Project Structure
+```text
+ACCESSSPEAK_LANGUAGE-DOC-ASSISTANT-MOBAW26SS/
+├── abgabe/                             # files related to pdf-submission
+├── ai_agents/                          # crewAI-agents backend files
+│   ├── crew/
+│   │   ├── __init__.py                 # dummy to initialize python package
+│   │   ├── agents.py                   # defines crewAI agents
+│   │   ├── crew.py                     # defines agents-crew
+│   │   ├── tasks.py                    # defines tasks for agents
+│   │   └── tools.py                    # ocr tool for text extraction
+│   ├── Dockerfile                      # defines agents-backend container setup
+│   ├── main.py                         # crewAI agents API
+│   ├── requirements.txt                # defines required python packages
+│   └── whisper_speech_to_text.py       # whisper stt service
+├── assets/                             # assets used in the project
+├── backend/                            # database backend files
+│   ├── app/
+│   │   ├── __init__.py                 # dummy to initialize python package
+│   │   ├── database.py                 # provides mongoDB client config and access
+│   │   ├── difficulty.py               # automatically determines text difficulty
+│   │   └── main.py                     # database API
+│   ├── Dockerfile                      # defines database-backend container setup
+│   └── requirements.txt                # defines required python packages
+├── konzept/                            # files related to the concept phase
+├── src/                                # contains main source code of app
+│   ├── app/
+│   │   ├── (tabs)/
+│   │   │   ├── _layout.tsx             # tabs page-layout
+│   │   │   ├── cameraPage.tsx          # screen to take photos of documents
+│   │   │   ├── chatBotPage.tsx         # screen to talk to chatbot
+│   │   │   ├── historyPage.tsx         # screen to view all your documents
+│   │   │   └── index.tsx               # home screen
+│   │   ├── pages/                      # additional screens
+│   │   │   ├── documentPage/           
+│   │   │   │   └── [id].tsx            # page of individual document entry
+│   │   │   ├── instructionsPage.tsx    # explains how to use app
+│   │   │   ├── scanningPage.tsx        # similar to cameraPage but to scan text 
+│   │   │   └── translationPage.tsx     # screen to translate user-input
+│   │   └── _layout.tsx                 # root page-layout
+│   ├── components/                     # ui-components
+│   ├── utils/                          # utility and service files
+│   │   ├── audioService.ts             # provides start+stop audiorecording
+│   │   ├── backendConfig.ts            # automatically sets backend address
+│   │   ├── DataProvider.tsx            # provides functions to use API's
+│   └── theme.ts                        # theme for entire app
+├── .gitignore                          # folders marked as ignore
+├── app.json                            # expo config
+├── docker-compose.yml                  # docker project cofiguration
+├── package-lock.json                   # stores dependency tree
+├── package.json                        # used packages and scripts
+├── README.md                           # documentation
+└── tsconfig.json                       # ts-compiler config
+```
+---
+
 ## Received Feedback 
 ### By Group *App_06_PetWatch / PawPilot*:
 ```
