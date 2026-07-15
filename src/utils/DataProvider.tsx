@@ -23,6 +23,7 @@ type DataContextType = {
   setDifficulty: (id: number, difficulty: string) => Promise<void>;
   renameEntry: (id: number, title: string) => Promise<void>;
   transcribeSpeech: (uri: string) => Promise<{ text: string }>;
+  convertImageToDocument: ( id: number,  title: string,text: string) => Promise<void>;
 };
 
 const DataContext = createContext<DataContextType | null>(null);
@@ -152,6 +153,27 @@ export function DataProvider({children}: {children: React.ReactNode}) {
       (entry) => ({ ...entry, title: trimmed })
     );
   };
+
+  const convertImageToDocument = async (
+    id: number,
+    title: string,
+    text: string
+  ) => {
+    await patchEntry(
+      id,
+      {
+        title,
+        type: "document",
+        originalText: text,
+      },
+      (entry) => ({
+        ...entry,
+        title,
+        type: "document",
+        originalText: text,
+      })
+    );
+  };
   
   // Speech-to-text
   const transcribeSpeech = async (uri: string) => {
@@ -183,6 +205,7 @@ export function DataProvider({children}: {children: React.ReactNode}) {
         setDifficulty,
         renameEntry,
         transcribeSpeech,
+        convertImageToDocument,
       }}
     >
       {children}

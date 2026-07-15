@@ -3,6 +3,7 @@ import { View, StyleSheet, Alert } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
+import * as FileSystem from "expo-file-system/legacy";
 
 import PageHeader from '@components/page-header.component';
 import PermissionCard from '@components/permission-card.component';
@@ -23,25 +24,37 @@ export default function CameraPage() {
 
   if (!permission) return <View />;
 
-  async function takePhoto() {
+async function takePhoto() {
+  try {
     if (!cameraRef.current) return;
 
     const photo = await cameraRef.current.takePictureAsync({
       quality: 1,
     });
 
-    setPhotoUri(photo.uri);
+    const filename = `photo-${Date.now()}.jpg`;
+    const newUri = FileSystem.documentDirectory + filename;
+
+    await FileSystem.copyAsync({
+      from: photo.uri,
+      to: newUri,
+    });
+
+    setPhotoUri(newUri);
 
     await addEntry(
       "Foto",
       "image",
       new Date().toLocaleDateString(),
-      photo.uri,
+      newUri,
       "leicht"
     );
 
-    console.log('Foto aufgenommen:', photo.uri);
+    console.log("Foto gespeichert:", newUri);
+  } catch (error) {
+    console.error("takePhoto error:", error);
   }
+}
 
   async function pickImage() {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
