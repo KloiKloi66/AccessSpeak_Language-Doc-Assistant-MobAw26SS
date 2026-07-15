@@ -182,6 +182,8 @@ async def scan_document(file: UploadFile = File(...)):
         print("ERROR:", str(e))
         raise HTTPException(status_code=500, detail="Fehler beim Dokument-Scan")
     
+# PDF-Scan
+
 @app.post("/pdf-scan")
 async def pdf_scan(file: UploadFile = File(...)):
     try:

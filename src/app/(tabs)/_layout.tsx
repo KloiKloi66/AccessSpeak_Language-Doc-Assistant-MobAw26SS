@@ -36,10 +36,10 @@ export default function TabsLayout() {
           }}
         />
         <Tabs.Screen
-           name="cameraPage"
+          name="cameraPage"
           listeners={{
             tabPress: async (e) => {
-               e.preventDefault();  //verhindert, dass er tatsächlich zur cameraPage navigiert.
+              e.preventDefault();  //verhindert, dass er tatsächlich zur cameraPage navigiert.
 
               const result = await DocumentPicker.getDocumentAsync({
                 type: [
@@ -53,42 +53,42 @@ export default function TabsLayout() {
               if (!result.canceled) {
                 const file = result.assets[0];
 
-                 console.log(file);
+                console.log(file);
 
                 const isImage = file.mimeType?.startsWith("image/");
                 const isPdf = file.mimeType === "application/pdf";
 
-if (isImage) {
-  await addEntry(
-    file.name,
-    "image",
-    new Date().toLocaleDateString(),
-    file.uri,
-    "leicht"
-  );
-} else if (isPdf) {
-  const formData = new FormData();
+                if (isImage) {
+                  await addEntry(
+                    file.name,
+                    "image",
+                    new Date().toLocaleDateString(),
+                    file.uri,
+                    "leicht"
+                  );
+                } else if (isPdf) {
+                  const formData = new FormData();
 
-  formData.append("file", {
-    uri: file.uri,
-    name: file.name,
-    type: "application/pdf",
-  } as any);
+                  formData.append("file", {
+                    uri: file.uri,
+                    name: file.name,
+                    type: "application/pdf",
+                  } as any);
 
-const response = await fetch(`${AI_URL}/pdf-scan`, {
-  method: "POST",
-  body: formData,
-});
+                  const response = await fetch(`${AI_URL}/pdf-scan`, {
+                    method: "POST",
+                    body: formData,
+                  });
 
-const data = await response.json();
+                  const data = await response.json();
 
-await addEntry(
-  data.title,
-  "document",
-  new Date().toLocaleDateString(),
-  data.text
-);
-}
+                  await addEntry(
+                    data.title,
+                    "document",
+                    new Date().toLocaleDateString(),
+                    data.text
+                  );
+                }
               }
             },
           }}
@@ -96,7 +96,7 @@ await addEntry(
             title: "Upload",
             tabBarIcon: ({ color }) => (
               <Feather name="upload" size={24} color={color} />
-             ),
+            ),
            }}
           />
         <Tabs.Screen
