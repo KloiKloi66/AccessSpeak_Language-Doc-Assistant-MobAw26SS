@@ -14,7 +14,7 @@ AccessSpeak is a language doc assistant with the purpose of simplifying and tran
 ---
 ## Styling decisions:
 Initially we decided on using a type of glass morphism style for the entire app. But after receiving feedback from not only our fellow students but also other app-testers, we decided to scrap this idea and try a more simple and minimalistic design.
-The UX is intended to be as uncomplicated an easy-to-use as possible as to not unnecessarily confuse the user who is already having trouble with his documents.
+The UX is intended to be as uncomplicated and easy-to-use as possible as to not unnecessarily confuse the user who is already having trouble with his documents.
 
 Initial styling and design planning was developed on this [Figma page](https://www.figma.com/design/R6o2Ub8vWAbZk5jRNuZTh6/Mobile-Anwendungen-Thema-DokuHelfer?node-id=0-1&p=f&t=CnHn1nP5R2toZOPL-0).
 
