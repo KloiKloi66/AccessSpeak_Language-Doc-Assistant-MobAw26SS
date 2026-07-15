@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import { Tabs } from 'expo-router';
-import { useDocuments } from '../../utils/DataProvider';
+import { useDocuments } from '@utils/DataProvider';
 import * as DocumentPicker from "expo-document-picker";
 import { AI_URL } from "@utils/backendConfig";
 
